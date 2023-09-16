@@ -20,6 +20,7 @@
 
 - type assertion is used at `src/components/getYouTubeList.vue`, need to be removed.
 - type assertion is used at `src/components/getTaobaoItem.vue`, need to be removed.
+- type assertion is used at `src/components/getTianmaoItem.vue`, need to be removed.
 - update detection.
 
 ## 测试

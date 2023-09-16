@@ -23,7 +23,7 @@ async function getMgtvList(type: "link" | "title") {
 
   // 如果已经请求过一次，就把内容存在res里，不用重复请求。
   if (res.value.length == 0) {
-    let id = window.__NUXT__["data"][0]["collection_id"];
+    let id = __NUXT__["data"][0]["collection_id"];
     let page = 1;
     let isLastPage = false;
     while (!isLastPage) {

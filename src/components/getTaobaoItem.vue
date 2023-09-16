@@ -53,19 +53,19 @@ async function getTaobaoItem() {
     productItem.value.pagename = productItem.value.pagename || "页面名称";
     productItem.value.price =
         productItem.value.price || $("#J_StrPrice>.tb-rmb-num").text();
-    let link = `https://item.taobao.com/item.htm?id=${window.g_config.itemId}`;
-    let img = window.g_config.idata.item.auctionImages;
+    let link = `https://item.taobao.com/item.htm?id=${g_config.itemId}`;
+    let img = g_config.idata.item.auctionImages;
 
     //加载品牌信息
-    let brand = window.g_config.shopName in json.Taobao2Brand
-        ? json.Taobao2Brand[window.g_config.shopName as keyof typeof json.Taobao2Brand]
-        : window.g_config.shopName;
+    let brand = g_config.shopName in json.Taobao2Brand
+        ? json.Taobao2Brand[g_config.shopName as keyof typeof json.Taobao2Brand]
+        : g_config.shopName;
 
     //加载主题信息
     let series = json["series"];
     let defaultFeat = "";
     series.forEach((element) => {
-        if (window.g_config["idata"]["item"]["title"].includes(element)) {
+        if (g_config["idata"]["item"]["title"].includes(element)) {
             defaultFeat = element;
         }
     });
