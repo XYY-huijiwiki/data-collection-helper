@@ -18,10 +18,11 @@
 
 ## todo
 
-- type assertion is used at `src/components/getYouTubeList.vue`, need to be removed.
-- type assertion is used at `src/components/getTaobaoItem.vue`, need to be removed.
-- type assertion is used at `src/components/getTianmaoItem.vue`, need to be removed.
-- update detection.
+- [ ] type assertion is used at `src/components/getYouTubeList.vue`, need to be removed.
+- [ ] type assertion is used at `src/components/getTaobaoItem.vue`, need to be removed.
+- [ ] type assertion is used at `src/components/getTianmaoItem.vue`, need to be removed.
+- [ ] update detection.
+- [x] Get book info from dangdang. Image download is not available yet.
 
 ## 测试
 
