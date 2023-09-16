@@ -72,9 +72,10 @@ async function getTianmaoItem() {
     productItem.value.feat = productItem.value.feat || defaultFeat;
 
     //加载品牌信息
-    let brand = $("[class^=ShopFloat--title]").text() in json.Tianmao2Brand
-        ? json.Tianmao2Brand[$("[class^=ShopFloat--title]").text() as keyof typeof json.Tianmao2Brand]
-        : window.g_config.shopName;
+    let shopName = $("[class^=ItemHeader--brand]").text();
+    let brand =  shopName in json.Tianmao2Brand
+        ? json.Tianmao2Brand[shopName as keyof typeof json.Tianmao2Brand]
+        : shopName;
 
     //加载链接信息
     let link =
