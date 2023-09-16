@@ -17,6 +17,9 @@ if (location.href.match(/detail.tmall.com\/item.htm*/)) {
 if (location.href.match(/www.mgtv.com\/h\/*/)) {
   currentSite = "芒果TV";
 }
+if (location.host==='product.dangdang.com') {
+  currentSite = '当当网'
+}
 
 console.log(currentSite);
 
@@ -33,6 +36,7 @@ console.log(currentSite);
         <getMgtvList v-if="currentSite === `芒果TV`" />
         <getTaobaoItem v-if="currentSite === `淘宝`" />
         <getTianmaoItem v-if="currentSite === `天猫`" />
+        <getDangdangItem v-if="currentSite === `当当网`" />
 
         <template #footer>
           <n-space>

@@ -20,10 +20,11 @@ export default defineConfig({
       userscript: {
         author: 'Karsten',
         match: [
-          'https://www.youtube.com/playlist*',
-          'https://item.taobao.com/item.htm*',
-          'https://detail.tmall.com/item.htm*',
-          'https://www.mgtv.com/h/*'
+          'http*://www.youtube.com/playlist*',
+          'http*://item.taobao.com/item.htm*',
+          'http*://detail.tmall.com/item.htm*',
+          'http*://www.mgtv.com/h/*',
+          'http*://product.dangdang.com/*',
         ]
       },
       build: {
