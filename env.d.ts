@@ -32,7 +32,7 @@ declare const prodSpuInfo: {
 // BookInfo
 type BookInfo = {
   mainImage?: string
-  images?: string[]
+  gallery?: string
   name?: string
   fullname: string
   author?: string

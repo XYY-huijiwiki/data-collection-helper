@@ -5,10 +5,7 @@
         使用前请先将页面滑动到底部，等待页面彻底加载完毕。如果有试读部分，还需要先点击“显示全部信息”。
       </n-alert>
       <n-input-group>
-        <n-input
-          v-model:value="fullname"
-          placeholder="Input book's title if the original one isn't suitable."
-        />
+        <n-input v-model:value="fullname" placeholder="Input book's title if the original one isn't suitable." />
         <n-button @click="getDangdangItem()">获取信息</n-button>
       </n-input-group>
       <n-space justify="space-between">
@@ -41,7 +38,7 @@ async function getDangdangItem() {
   // init bookInfo
   let bookInfo: BookInfo = {
     ref: `<ref>[${location.href} ${document.title}]</ref>`,
-    fullname: prodSpuInfo.productName
+    fullname: fullname.value || prodSpuInfo.productName
   }
 
   // deal with package, isbn, size, paper
@@ -105,6 +102,7 @@ async function getDangdangItem() {
     imgURLs.push(newLink)
   })
   imgURLs = [...new Set(imgURLs)] // remove duplicates imgURL
+  let imgNames: string[] = []
   imgURLs.forEach((e, i) => {
     if (i === 0) {
       // fist image is mainImage
@@ -113,10 +111,11 @@ async function getDangdangItem() {
     } else {
       // other images are in images
       let name = bookInfo.fullname + i + e.slice(e.lastIndexOf('.'))
-      bookInfo.images ? bookInfo.images.push(name) : (bookInfo.images = [name])
+      imgNames.push(name)
       ifDownload.value ? GM_download(e, name) : null
     }
   })
+  bookInfo.gallery = imgNames.join('\n')
 
   // deal with date
   let dateStr = $(`div.messbox_info>span.t1:not([dd_name])`)
@@ -124,9 +123,7 @@ async function getDangdangItem() {
     .replace(/出版时间:/, '')
     .trim()
   let year = Number(dateStr.match(/([0-9]{4})年/)?.[1]) || 1970
-  console.log(year)
   let month = Number(dateStr.match(/([0-9]{1,2})月/)?.[1]) || 1
-  console.log(month)
   let day = 1
   bookInfo.date = new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10)
 
@@ -177,21 +174,17 @@ async function getDangdangItem() {
 {{#gallery}}
 === 图册 ===
 <gallery>
-{{#images}}
-{{.}}
-{{/images}}
+{{gallery}}
 </gallery>
 
 {{/gallery}}`
 
-  // determine if images exist
-  let gallery = bookInfo.images ? true : false
   // render template
-  let result = mustache.render(template, { ...bookInfo, gallery })
+  let result = mustache.render(template, bookInfo).trim()
   // copy to clipboard
   ifAutoCopy.value ? GM_setClipboard(result, 'text/plain') : null
   // go to wiki page
-  ifGoToWiki.value ? window.open(`//xyy.huijiwiki.com/wiki/${bookInfo.fullname}`) : null
+  ifGoToWiki.value ? window.open(`//xyy.huijiwiki.com/wiki/${bookInfo.fullname}?action=edit`) : null
   // end of template
   code.value = result
 }
