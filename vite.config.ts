@@ -19,6 +19,10 @@ export default defineConfig({
       entry: 'src/main.ts',
       userscript: {
         author: 'Karsten',
+        updateURL:
+          `https://cdn.jsdelivr.net/gh/XYY-huijiwiki/data-collection-helper@dist/index.meta.js`,
+        downloadURL:
+          `https://cdn.jsdelivr.net/gh/XYY-huijiwiki/data-collection-helper@dist/index.user.js`,
         match: [
           'http*://www.youtube.com/playlist*',
           'http*://item.taobao.com/item.htm*',
@@ -31,7 +35,9 @@ export default defineConfig({
         externalGlobals: {
           vue: cdn.jsdelivr('Vue', 'dist/vue.global.prod.js'),
           'jquery/dist/jquery.slim': cdn.jsdelivr('jQuery', 'dist/jquery.slim.min.js')
-        }
+        },
+        fileName: 'index.user.js',
+        metaFileName: 'index.meta.js'
       }
     })
   ],
