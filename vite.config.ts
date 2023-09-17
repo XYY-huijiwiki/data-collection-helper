@@ -24,12 +24,13 @@ export default defineConfig({
           'http*://item.taobao.com/item.htm*',
           'http*://detail.tmall.com/item.htm*',
           'http*://www.mgtv.com/h/*',
-          'http*://product.dangdang.com/*',
+          'http*://product.dangdang.com/*'
         ]
       },
       build: {
         externalGlobals: {
           vue: cdn.jsdelivr('Vue', 'dist/vue.global.prod.js'),
+          'jquery/dist/jquery.slim': cdn.jsdelivr('jQuery', 'dist/jquery.slim.min.js')
         }
       }
     })
