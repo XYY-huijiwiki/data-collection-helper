@@ -5,7 +5,10 @@
         使用前请先将页面滑动到底部，等待页面彻底加载完毕。如果有试读部分，还需要先点击“显示全部信息”。
       </n-alert>
       <n-input-group>
-        <n-input v-model:value="fullname" placeholder="Input book's title if the original one isn't suitable." />
+        <n-input
+          v-model:value="fullname"
+          placeholder="Input book's title if the original one isn't suitable."
+        />
         <n-button @click="getDangdangItem()">获取信息</n-button>
       </n-input-group>
       <n-space justify="space-between">
@@ -120,8 +123,10 @@ async function getDangdangItem() {
     .text()
     .replace(/出版时间:/, '')
     .trim()
-  let year = Number(dateStr.match(/([0-9]{4})年/)?.[1]) ?? 1970
-  let month = Number(dateStr.match(/([0-9]{1,2})月/)?.[1]) ?? 1
+  let year = Number(dateStr.match(/([0-9]{4})年/)?.[1]) || 1970
+  console.log(year)
+  let month = Number(dateStr.match(/([0-9]{1,2})月/)?.[1]) || 1
+  console.log(month)
   let day = 1
   bookInfo.date = new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10)
 
