@@ -1,6 +1,6 @@
 # data-collection-helper
 
-用于辅助收集羊羊百科所需数据的用户脚本。浏览器安装[油猴插件](https://www.tampermonkey.net)后，[点击这里](https://cdn.jsdelivr.net/gh/XYY-huijiwiki/data-collection-helper@dist/data-collection-helper.user.js)安装脚本。目前的功能有：
+用于辅助收集羊羊百科所需数据的用户脚本。浏览器安装[油猴插件](https://www.tampermonkey.net)后，[点击这里](https://cdn.jsdelivr.net/gh/XYY-huijiwiki/data-collection-helper@dist/index.user.js)安装脚本。目前的功能有：
 
 - 在优兔的视频列表页面（比如[羊村守护者](https://www.youtube.com/playlist?list=PLCxAtDkpA3f-pJSUtq-gb27ndgVvrav2Z)）批量收集视频信息，可用于快速填写剧集信息。
 - 在淘宝商品详情页面（比如[《筐出未来》2022台历礼盒](https://item.taobao.com/item.htm?id=666003448564)）一键生成[周边页面](https://xyy.huijiwiki.com/wiki/《筐出未来》2022台历礼盒)的wiki代码。
@@ -22,7 +22,7 @@
 - [ ] type assertion is used at `src/components/getYouTubeList.vue`, need to be removed.
 - [ ] type assertion is used at `src/components/getTaobaoItem.vue`, need to be removed.
 - [ ] type assertion is used at `src/components/getTianmaoItem.vue`, need to be removed.
-- [ ] update detection.
+- [x] update detection.
 - [x] Get book info from dangdang.
 
 ## 测试
