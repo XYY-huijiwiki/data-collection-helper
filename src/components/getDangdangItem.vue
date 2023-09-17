@@ -5,10 +5,7 @@
         使用前请先将页面滑动到底部，等待页面彻底加载完毕。如果有试读部分，还需要先点击“显示全部信息”。
       </n-alert>
       <n-input-group>
-        <n-input
-          v-model:value="fullname"
-          placeholder="Input book's title if the original one isn't suitable."
-        />
+        <n-input v-model:value="fullname" placeholder="Input book's title if the original one isn't suitable." />
         <n-button @click="getDangdangItem()">获取信息</n-button>
       </n-input-group>
       <n-space justify="space-between">
@@ -88,7 +85,6 @@ async function getDangdangItem() {
   bookInfo.sample = samples.join('\n')
 
   // deal with images
-  // regex comes from https://github.com/qsniyg/maxurl
   let imgURLs: string[] = []
   $(`#main-img-slider img`).each((i, e) => {
     let link = $(e).attr('src')
@@ -96,6 +92,7 @@ async function getDangdangItem() {
       message.error(`image not found (${e})`)
       return
     }
+    // regex comes from https://github.com/qsniyg/maxurl
     let newLink = `http:${link}`
       .replace(
         /(\/[0-9]{2}\/+[0-9]{2}\/+[0-9]+-[0-9]+)_[a-z]_([0-9]+\.[^/.]+)(?:[?#].*)?$/,
@@ -106,14 +103,15 @@ async function getDangdangItem() {
   })
   imgURLs = [...new Set(imgURLs)] // remove duplicates imgURL
   imgURLs.forEach((e, i) => {
-    let name = bookInfo.fullname + i + e.slice(e.lastIndexOf('.'))
-    ifDownload.value ? GM_download(e, name) : null
     if (i === 0) {
       // fist image is mainImage
       bookInfo.mainImage = bookInfo.fullname + e.slice(e.lastIndexOf('.'))
+      ifDownload.value ? GM_download(e, bookInfo.mainImage) : null
     } else {
       // other images are in images
+      let name = bookInfo.fullname + i + e.slice(e.lastIndexOf('.'))
       bookInfo.images ? bookInfo.images.push(name) : (bookInfo.images = [name])
+      ifDownload.value ? GM_download(e, name) : null
     }
   })
 
