@@ -2,10 +2,11 @@
 
 用于辅助收集羊羊百科所需数据的用户脚本。浏览器安装[油猴插件](https://www.tampermonkey.net)后，[点击这里](https://cdn.jsdelivr.net/gh/XYY-huijiwiki/data-collection-helper@dist/data-collection-helper.user.js)安装脚本。目前的功能有：
 
-- 在优兔的视频列表页面（比如 https://www.youtube.com/playlist?list=PLCxAtDkpA3f-pJSUtq-gb27ndgVvrav2Z ）批量收集视频信息，可用于快速填写剧集信息。
-- 在淘宝商品详情页面（比如 https://item.taobao.com/item.htm?id=666003448564 ）一键生成周边页面（比如[《筐出未来》2022台历礼盒](https://xyy.huijiwiki.com/wiki/%E3%80%8A%E7%AD%90%E5%87%BA%E6%9C%AA%E6%9D%A5%E3%80%8B2022%E5%8F%B0%E5%8E%86%E7%A4%BC%E7%9B%92)）的wiki代码。
-- 在天猫商品详情页面（比如 https://detail.tmall.com/item.htm?id=695522923134 ）一键生成周边页面（比如[2023羊羊台历](https://xyy.huijiwiki.com/wiki/2023%E7%BE%8A%E7%BE%8A%E5%8F%B0%E5%8E%86)）的wiki代码。
-- 在芒果TV视频列表（比如 https://www.mgtv.com/h/508234.html ）批量收集视频信息。
+- 在优兔的视频列表页面（比如[羊村守护者](https://www.youtube.com/playlist?list=PLCxAtDkpA3f-pJSUtq-gb27ndgVvrav2Z)）批量收集视频信息，可用于快速填写剧集信息。
+- 在淘宝商品详情页面（比如[《筐出未来》2022台历礼盒](https://item.taobao.com/item.htm?id=666003448564)）一键生成[周边页面](https://xyy.huijiwiki.com/wiki/《筐出未来》2022台历礼盒)的wiki代码。
+- 在天猫商品详情页面（比如[2023羊羊台历](https://detail.tmall.com/item.htm?id=695522923134)）一键生成[周边页面](https://xyy.huijiwiki.com/wiki/2023%E7%BE%8A%E7%BE%8A%E5%8F%B0%E5%8E%86)的wiki代码。
+- 在芒果TV视频列表（比如[勇闯四季城](https://www.mgtv.com/h/508234.html)）批量收集视频信息。
+- 在当当网书籍商品详情页（比如[羊年喜羊羊电影小说](http://product.dangdang.com/23636327.html)）一键生成周边页面的wiki代码。暂不支持套装图书的代码生成。
 
 ## 使用方法
 
@@ -22,7 +23,7 @@
 - [ ] type assertion is used at `src/components/getTaobaoItem.vue`, need to be removed.
 - [ ] type assertion is used at `src/components/getTianmaoItem.vue`, need to be removed.
 - [ ] update detection.
-- [x] Get book info from dangdang. Image download is not available yet.
+- [x] Get book info from dangdang.
 
 ## 测试
 
