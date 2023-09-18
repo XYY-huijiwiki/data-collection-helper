@@ -1,6 +1,7 @@
 {
   "name": "data-collection-helper",
-  "version": "0.0.4",
+  "description": "A userscript that helps you collect data from web pages for the XYY Huijiwiki.",
+  "version": "0.0.5",
   "private": true,
   "scripts": {
     "dev": "vite",
