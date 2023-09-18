@@ -18,18 +18,26 @@ export default defineConfig({
     vitePluginMonkey({
       entry: 'src/main.ts',
       userscript: {
+        name: {
+          de: 'Daten-Sammlungs-Helfer',
+          en: 'Data Collection Helper',
+          zh: '数据采集助手',
+        },
+        description: {
+          de: 'Ein Userscript, das dir hilft, Daten von Webseiten für das XYY Huijiwiki zu sammeln.',
+          en: 'A userscript that helps you collect data from web pages for the XYY Huijiwiki.',
+          zh: '一个帮助你从网页上采集数据给羊羊百科用的用户脚本。',
+        },
         author: 'Karsten',
-        updateURL:
-          `https://cdn.jsdelivr.net/gh/XYY-huijiwiki/data-collection-helper@dist/index.meta.js`,
-        downloadURL:
-          `https://cdn.jsdelivr.net/gh/XYY-huijiwiki/data-collection-helper@dist/index.user.js`,
+        updateURL: `https://cdn.jsdelivr.net/gh/XYY-huijiwiki/data-collection-helper@dist/index.meta.js`,
+        downloadURL: `https://cdn.jsdelivr.net/gh/XYY-huijiwiki/data-collection-helper@dist/index.user.js`,
         match: [
           'http*://www.youtube.com/playlist*',
           'http*://item.taobao.com/item.htm*',
           'http*://detail.tmall.com/item.htm*',
           'http*://www.mgtv.com/h/*',
           'http*://product.dangdang.com/*'
-        ]
+        ],
       },
       build: {
         externalGlobals: {

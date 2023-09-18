@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { zhCN, dateZhCN, useOsTheme, darkTheme } from 'naive-ui'
+import { GM_registerMenuCommand } from 'vite-plugin-monkey/dist/client';
 import { ref } from 'vue'
 
 let showDrawer = ref(false)
@@ -21,6 +22,10 @@ if (location.host === 'product.dangdang.com') {
   currentSite = '当当网'
 }
 
+GM_registerMenuCommand('打开羊羊百科小助手', () => {
+  showDrawer.value = true
+})
+
 console.log(currentSite)
 </script>
 
@@ -35,9 +40,6 @@ console.log(currentSite)
       keep-alive-on-hover
       placement="top-right"
     >
-      <n-button type="primary" circle size="large" class="float-button" @click="showDrawer = true"
-        >按钮</n-button
-      >
       <n-drawer
         v-model:show="showDrawer"
         :default-width="480"
