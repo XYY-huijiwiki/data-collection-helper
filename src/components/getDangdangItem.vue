@@ -5,7 +5,10 @@
         使用前请先将页面滑动到底部，等待页面彻底加载完毕。如果有试读部分，还需要先点击“显示全部信息”。
       </n-alert>
       <n-input-group>
-        <n-input v-model:value="fullname" placeholder="Input book's title if the original one isn't suitable." />
+        <n-input
+          v-model:value="fullname"
+          placeholder="Input book's title if the original one isn't suitable."
+        />
         <n-button @click="getDangdangItem()">获取信息</n-button>
       </n-input-group>
       <n-space justify="space-between">
@@ -24,6 +27,8 @@ import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import mustache from 'mustache'
 import { ref } from 'vue'
 import { useMessage } from 'naive-ui'
+import template from '@/template/getDangdangItem.mustache?raw'
+console.log(template);
 
 let message = useMessage()
 let code = ref('') // code to be shown
@@ -93,7 +98,7 @@ async function getDangdangItem() {
       return
     }
     // regex comes from https://github.com/qsniyg/maxurl
-    let newLink = `http:${link}`
+    let newLink = `https:${link}`
       .replace(
         /(\/[0-9]{2}\/+[0-9]{2}\/+[0-9]+-[0-9]+)_[a-z]_([0-9]+\.[^/.]+)(?:[?#].*)?$/,
         '$1_o_$2'
@@ -131,54 +136,6 @@ async function getDangdangItem() {
   console.log(bookInfo)
 
   // start of template
-  let template = `{{=<% %>=}}
-{{出版物信息
-<%={{ }}=%>
-|图片={{mainImage}}
-|书名={{name}}
-|全名={{fullname}}
-|作者={{author}}
-|译者={{translator}}
-|编者={{editor}}
-|出版={{publisher}}
-|定价={{price}}
-|日期={{date}}
-|开本={{size}}
-|尺寸={{dimension}}
-|页码={{pages}}
-|字数={{words}}
-|纸张={{paper}}
-|包装={{package}}
-|书号={{isbn}}
-}}
-
-'''{{fullname}}'''是一本羊羊图书。
-
-{{#description}}
-=== 简介 ===
-{{description}}{{{ref}}}
-
-{{/description}}
-{{#contents}}
-=== 目录 ===
-* {{contents}}
-
-{{/contents}}
-{{#sample}}
-=== 试读 ===
-<gallery>
-{{sample}}
-</gallery>
-
-{{/sample}}
-{{#gallery}}
-=== 图册 ===
-<gallery>
-{{gallery}}
-</gallery>
-
-{{/gallery}}`
-
   // render template
   let result = mustache.render(template, bookInfo).trim()
   // copy to clipboard
