@@ -65,16 +65,16 @@ async function getTaobaoItem() {
   productItem.value.price = productItem.value.price || $('#J_StrPrice>.tb-rmb-num').text()
   let link = `https://item.taobao.com/item.htm?id=${new URLSearchParams(location.search).get('id')}`
   let imgElementList = $("img[class^='PicGallery--thumbnailPic--']")
-  let img: string[] = []
+  let imgs: string[] = []
   imgElementList.each((index, ele) => {
-    img = img.concat(
+    imgs = imgs.concat(
       ($(ele).attr('src') as string)
         .replace('_110x10000Q75.jpg_.webp', '')
         .replace(`imgextra/`, '')
         .replace(/\/i\d\//, '/')
     )
   })
-  console.log(img)
+  console.log(imgs)
 
   //加载品牌信息
   let shopName = $("div[class^='ShopHeader--title--']").text()
@@ -95,7 +95,7 @@ async function getTaobaoItem() {
 
   //收集颜色分类的图片
   $(`img.skuIcon`).each((index, ele) => {
-    img = img.concat(
+    imgs = imgs.concat(
       ($(ele).attr('src') as string)
         .replace('_60x60q50.jpg_.webp', '')
         .replace('bao/uploaded/', '')
@@ -103,12 +103,12 @@ async function getTaobaoItem() {
     )
   })
   //去除重复图片
-  img = Array.from(new Set(img))
+  imgs = Array.from(new Set(imgs))
   //排序和下载图片
   let imgNameList: string[] = [] //图片的文件名列表
-  img.forEach((ele, index) => {
+  imgs.forEach((ele, index) => {
     if (ifDownload.value) {
-      GM_download(ele, productItem.value.pagename + (index + 1) + ele.slice(-4))
+      GM_download('https:' + ele, productItem.value.pagename + (index + 1) + ele.slice(-4))
     }
     imgNameList = imgNameList.concat(productItem.value.pagename + (index + 1) + ele.slice(-4))
   })
