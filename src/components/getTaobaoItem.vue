@@ -4,21 +4,35 @@
       <n-alert :show-icon="false" title="获取商品数据">
         使用下列功能时请务必先手动滑动至页面底部，确保描述图完全加载完毕。
       </n-alert>
-      <n-input-group>
-        <n-input v-model:value="productItem.pagename" placeholder="page title/product name" />
-        <n-date-picker
-          v-model:formatted-value="productItem.date"
-          value-format="yyyy-MM-dd"
-          type="date"
-          clearable
-        />
-        <n-button @click="getTaobaoItem()" :loading="loading"> 获取信息 </n-button>
-      </n-input-group>
-      <n-space justify="space-between">
-        <n-checkbox v-model:checked="ifDownload">下载图片</n-checkbox>
-        <n-checkbox v-model:checked="ifAutoCopy">自动复制</n-checkbox>
-        <n-checkbox v-model:checked="ifGoToWiki">跳转百科</n-checkbox>
-      </n-space>
+      <n-form>
+        <n-form-item label="页面名称">
+          <n-input v-model:value="productItem.pagename" />
+        </n-form-item>
+        <n-form-item label="原价价格" required>
+          <n-input-number
+            v-model:value="productItem.price"
+            :show-button="false"
+            style="flex-grow: 1"
+          />
+        </n-form-item>
+        <n-form-item label="发售日期" required>
+          <n-date-picker
+            v-model:formatted-value="productItem.date"
+            value-format="yyyy-MM-dd"
+            type="date"
+            clearable
+            style="flex-grow: 1"
+          />
+        </n-form-item>
+        <n-form-item label="其他设置">
+          <n-checkbox v-model:checked="ifDownload" style="flex-grow: 1"> 下载图片 </n-checkbox>
+          <n-checkbox v-model:checked="ifAutoCopy" style="flex-grow: 1"> 自动复制 </n-checkbox>
+          <n-checkbox v-model:checked="ifGoToWiki" style="flex-grow: 1"> 跳转百科 </n-checkbox>
+        </n-form-item>
+        <n-button @click="getTaobaoItem()" :loading="loading" type="primary" style="width: 100%">
+          获取信息
+        </n-button>
+      </n-form>
       <n-code :code="code" word-wrap style="user-select: all" />
     </n-space>
   </div>
@@ -43,41 +57,52 @@ let ifAutoCopy = ref(false)
 let ifGoToWiki = ref(false)
 
 async function getTaobaoItem() {
-  productItem.value.pagename = productItem.value.pagename || '页面名称'
+  // pagename is inputed by user or get from page title
+  productItem.value.pagename =
+    productItem.value.pagename || $("h1[class^='ItemHeader--mainTitle--']").text()
+
+  // price
   productItem.value.price = productItem.value.price || $('#J_StrPrice>.tb-rmb-num').text()
-  let link = `https://item.taobao.com/item.htm?id=${g_config.itemId}`
-  let img = g_config.idata.item.auctionImages
+  let link = `https://item.taobao.com/item.htm?id=${new URLSearchParams(location.search).get('id')}`
+  let imgElementList = $("img[class^='PicGallery--thumbnailPic--']")
+  let img: string[] = []
+  imgElementList.each((index, ele) => {
+    img = img.concat(
+      ($(ele).attr('src') as string)
+        .replace('_110x10000Q75.jpg_.webp', '')
+        .replace(`imgextra/`, '')
+        .replace(/\/i\d\//, '/')
+    )
+  })
+  console.log(img)
 
   //加载品牌信息
+  let shopName = $("div[class^='ShopHeader--title--']").text()
   let brand =
-    g_config.shopName in json.Taobao2Brand
-      ? json.Taobao2Brand[g_config.shopName as keyof typeof json.Taobao2Brand]
-      : g_config.shopName
+    shopName in json.Taobao2Brand
+      ? json.Taobao2Brand[shopName as keyof typeof json.Taobao2Brand]
+      : shopName
 
   //加载主题信息
   let series = json['series']
   let defaultFeat = ''
   series.forEach((element) => {
-    if (g_config['idata']['item']['title'].includes(element)) {
+    if ($("div[class^='ItemHeader--mainTitle--']").text().includes(element)) {
       defaultFeat = element
     }
   })
   productItem.value.feat = productItem.value.feat || defaultFeat
 
   //收集颜色分类的图片
-  $('#J_isku .J_TSaleProp a').each((index, ele) => {
-    if ($(ele).attr('style')) {
-      img = img.concat(
-        ($(ele).attr('style') as string)
-          .replace('background:url(', '')
-          .replace('_30x30.jpg) center no-repeat;', '')
-      )
-    }
+  $(`img.skuIcon`).each((index, ele) => {
+    img = img.concat(
+      ($(ele).attr('src') as string)
+        .replace('_60x60q50.jpg_.webp', '')
+        .replace('bao/uploaded/', '')
+        .replace(/\/i\d\//, '/')
+    )
   })
-  //加上https前缀并去除重复图片
-  img.forEach((ele, index) => {
-    img[index] = ele.replace(/\/\/gd\d./, 'https://gd1.')
-  })
+  //去除重复图片
   img = Array.from(new Set(img))
   //排序和下载图片
   let imgNameList: string[] = [] //图片的文件名列表
@@ -94,9 +119,9 @@ async function getTaobaoItem() {
   let longImgList: string[] = [] //长图的文件名列表
   let longImgStr = '' //长图的文件名字符串
 
-  $('#J_DivItemDesc img').each((index, ele) => {
+  $('.descV8-container img').each((index, ele) => {
     let a = $(ele).attr('src')
-    if (a) {
+    if (a && !a.endsWith('?getAvatar=avatar')) {
       longImg = a.slice(0, 4) === 'http' ? longImg.concat(a) : longImg.concat('https:' + a)
     } else {
       console.log(`#J_DivItemDesc img src is undefined (${index})`)
