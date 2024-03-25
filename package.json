@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vitest --run && -p type-check \"build-only {@}\" -- && cp index.html dist/",
+    "build": "vitest --run && run-p type-check \"build-only {@}\" -- && cp index.html dist/",
     "preview": "vite preview",
     "test": "vitest",
     "build-only": "vite build",
