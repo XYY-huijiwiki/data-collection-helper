@@ -11,7 +11,7 @@ test.each([
     // This example comes from gallery img switcher (img[class^='PicGallery--thumbnailPic--'])
     input:
       '//gw.alicdn.com/imgextra/i2/2201408164619/O1CN01BkKEL21jzYMgtpREd_!!2201408164619.png_.webp',
-    output: '//img.alicdn.com/O1CN01BkKEL21jzYMgtpREd_!!2201408164619.png1'
+    output: '//img.alicdn.com/O1CN01BkKEL21jzYMgtpREd_!!2201408164619.png'
   },
   {
     // This example comes from product type selector (img.skuIcon)
