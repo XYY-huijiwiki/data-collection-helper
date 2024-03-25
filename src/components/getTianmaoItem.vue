@@ -30,6 +30,7 @@ import json from '@/json/index.json'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import $ from 'jquery/dist/jquery.slim'
 
+let dev = import.meta.env.DEV
 let code = ref('')
 let loading = ref(false)
 let productItem = ref({
@@ -84,8 +85,7 @@ async function getTianmaoItem() {
       longImgList = longImgList.concat(a)
     }
   })
-  console.log(`longImgList`)
-  console.log(longImgList)
+  dev && console.log('longImgList', longImgList)
   //生成文件名
   let longImgNameList: string[] = []
   longImgList.forEach((element, index) => {

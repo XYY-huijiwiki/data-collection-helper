@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { zhCN, dateZhCN, useOsTheme, darkTheme } from 'naive-ui'
-import { GM_registerMenuCommand } from 'vite-plugin-monkey/dist/client';
+import { GM_registerMenuCommand } from 'vite-plugin-monkey/dist/client'
 import { ref } from 'vue'
 
+let dev = import.meta.env.DEV
 let showDrawer = ref(false)
 
 let currentSite = ''
@@ -26,7 +27,7 @@ GM_registerMenuCommand('打开羊羊百科小助手', () => {
   showDrawer.value = true
 })
 
-console.log(currentSite)
+dev && console.log(currentSite)
 </script>
 
 <template>
@@ -53,7 +54,7 @@ console.log(currentSite)
           title="羊羊百科小助手"
           closable
           :native-scrollbar="false"
-          :scrollbar-props="{ 'x-scrollable': 'true' }"
+          :scrollbar-props="{ 'x-scrollable': true }"
         >
           <getYouTubeList v-if="currentSite === `优兔`" />
           <getMgtvList v-if="currentSite === `芒果TV`" />
