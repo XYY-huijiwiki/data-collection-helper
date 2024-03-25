@@ -15,10 +15,11 @@
 import { ref } from 'vue'
 import $ from 'jquery/dist/jquery.slim'
 
+let dev = import.meta.env.DEV
 let resCode = ref(``)
 
 function getYouTubeList(type: 'link' | 'title' | 'wiki') {
-  console.log('正在获取优兔播放列表……')
+  dev && console.log('正在获取优兔播放列表……')
 
   // get the DOM list
   let DOMList = $('a#video-title')
@@ -53,7 +54,7 @@ function getYouTubeList(type: 'link' | 'title' | 'wiki') {
       break
   }
 
-  console.log(res)
+  dev && console.log(res)
   return res
 }
 </script>

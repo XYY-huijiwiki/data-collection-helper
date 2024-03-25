@@ -14,6 +14,7 @@
 import { ref } from 'vue'
 import { sleep } from '@/utils/sleep'
 
+let dev = import.meta.env.DEV
 let res = ref([])
 let resCode = ref(``)
 let loading = ref(false)
@@ -32,7 +33,7 @@ async function getMgtvList(type: 'link' | 'title') {
       )
       let responseJSON = await response.json()
       page++
-      console.log(`page=${responseJSON['data']['current_page']}`)
+      dev && console.log(`page=${responseJSON['data']['current_page']}`)
       res.value = res.value.concat(responseJSON['data']['list'])
       isLastPage = responseJSON['data']['total_page'] === responseJSON['data']['current_page']
       await sleep(1000)

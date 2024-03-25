@@ -40,15 +40,23 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import type { Ref } from 'vue'
 import json from '@/json/index.json'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import $ from 'jquery/dist/jquery.slim'
+import getAliImgOrgUrl from '@/utils/getAliImgOrgUrl'
 
+const dev = import.meta.env.DEV
 let code = ref('')
 let loading = ref(false)
-let productItem = ref({
+let productItem: Ref<{
+  pagename: string
+  price: number | undefined
+  date: string | null
+  feat: string
+}> = ref({
   pagename: '',
-  price: '',
+  price: undefined,
   date: null,
   feat: ''
 })
@@ -57,53 +65,33 @@ let ifAutoCopy = ref(false)
 let ifGoToWiki = ref(false)
 
 async function getTaobaoItem() {
-  // pagename is inputed by user or get from page title
+  // pagename
   productItem.value.pagename =
     productItem.value.pagename || $("h1[class^='ItemHeader--mainTitle--']").text()
 
   // price
-  productItem.value.price = productItem.value.price || $('#J_StrPrice>.tb-rmb-num').text()
+  productItem.value.price = productItem.value.price || Number($('#J_StrPrice>.tb-rmb-num').text())
+
+  // link
   let link = `https://item.taobao.com/item.htm?id=${new URLSearchParams(location.search).get('id')}`
+
+  // imgs (not long img)
   let imgElementList = $("img[class^='PicGallery--thumbnailPic--']")
   let imgs: string[] = []
   imgElementList.each((index, ele) => {
-    imgs = imgs.concat(
-      ($(ele).attr('src') as string)
-        .replace('_110x10000Q75.jpg_.webp', '')
-        .replace(`imgextra/`, '')
-        .replace(/\/i\d\//, '/')
-    )
+    let src = $(ele).attr('src')
+    if (src) imgs.push(src)
   })
-  console.log(imgs)
-
-  //加载品牌信息
-  let shopName = $("div[class^='ShopHeader--title--']").text()
-  let brand =
-    shopName in json.Taobao2Brand
-      ? json.Taobao2Brand[shopName as keyof typeof json.Taobao2Brand]
-      : shopName
-
-  //加载主题信息
-  let series = json['series']
-  let defaultFeat = ''
-  series.forEach((element) => {
-    if ($("div[class^='ItemHeader--mainTitle--']").text().includes(element)) {
-      defaultFeat = element
-    }
-  })
-  productItem.value.feat = productItem.value.feat || defaultFeat
 
   //收集颜色分类的图片
   $(`img.skuIcon`).each((index, ele) => {
-    imgs = imgs.concat(
-      ($(ele).attr('src') as string)
-        .replace('_60x60q50.jpg_.webp', '')
-        .replace('bao/uploaded/', '')
-        .replace(/\/i\d\//, '/')
-    )
+    let src = $(ele).attr('src')
+    if (src) imgs.push(src)
   })
   //去除重复图片
+  imgs = imgs.map((ele) => getAliImgOrgUrl(ele))
   imgs = Array.from(new Set(imgs))
+  dev && console.log('imgs', imgs)
   //排序和下载图片
   let imgNameList: string[] = [] //图片的文件名列表
   imgs.forEach((ele, index) => {
@@ -114,25 +102,43 @@ async function getTaobaoItem() {
   })
   let imgNameStr = imgNameList.join('\n')
 
-  //加载长图
+  // brand
+  let shopName = $("div[class^='ShopHeader--title--']").text()
+  let brand =
+    shopName in json.Taobao2Brand
+      ? json.Taobao2Brand[shopName as keyof typeof json.Taobao2Brand]
+      : shopName
+
+  // feat
+  let series = json['series']
+  let defaultFeat = ''
+  series.forEach((element) => {
+    if ($("div[class^='ItemHeader--mainTitle--']").text().includes(element)) {
+      defaultFeat = element
+    }
+  })
+  productItem.value.feat = productItem.value.feat || defaultFeat
+
+  // long img
   let longImg: string[] = [] //长图的链接列表
   let longImgList: string[] = [] //长图的文件名列表
   let longImgStr = '' //长图的文件名字符串
 
   $('.descV8-container img').each((index, ele) => {
-    let a = $(ele).attr('src')
-    if (a && !a.endsWith('?getAvatar=avatar')) {
-      longImg = a.slice(0, 4) === 'http' ? longImg.concat(a) : longImg.concat('https:' + a)
-    } else {
-      console.log(`#J_DivItemDesc img src is undefined (${index})`)
+    let src = $(ele).attr('src')
+    if (src && !src.endsWith('?getAvatar=avatar')) {
+      longImg.push(getAliImgOrgUrl(src))
     }
   })
-  console.log(longImg)
+  dev && console.log('longImg', longImg)
 
   //排序和下载长图
   longImg.forEach((ele, index) => {
     if (ifDownload.value) {
-      GM_download(ele, productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4))
+      GM_download(
+        'https:' + ele,
+        productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)
+      )
     }
     longImgList = longImgList.concat(
       productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)

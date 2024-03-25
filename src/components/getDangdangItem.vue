@@ -28,7 +28,8 @@ import mustache from 'mustache'
 import { ref } from 'vue'
 import { useMessage } from 'naive-ui'
 import template from '@/template/getDangdangItem.mustache?raw'
-console.log(template);
+let dev = import.meta.env.DEV
+dev && console.log(template)
 
 let message = useMessage()
 let code = ref('') // code to be shown
@@ -133,7 +134,7 @@ async function getDangdangItem() {
   bookInfo.date = new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10)
 
   // end of data getting
-  console.log(bookInfo)
+  dev && console.log(bookInfo)
 
   // start of template
   // render template
