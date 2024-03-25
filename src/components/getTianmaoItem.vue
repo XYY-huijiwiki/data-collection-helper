@@ -29,6 +29,7 @@ import { ref } from 'vue'
 import json from '@/json/index.json'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import $ from 'jquery/dist/jquery.slim'
+import getAliImgOrgUrl from '@/utils/getAliImgOrgUrl'
 
 let dev = import.meta.env.DEV
 let code = ref('')
@@ -76,13 +77,10 @@ async function getTianmaoItem() {
   let longImgList: string[] = []
   $(`[class^='descV8'] img`).each((index, ele) => {
     let a = $(ele).attr('src')
-    // 判断src是否为空，并去除两张无用的图片
-    if (
-      a !== undefined &&
-      a !== '//gw.alicdn.com/tfs/TB1d0h2qVYqK1RjSZLeXXbXppXa-1125-960.png?getAvatar=avatar' &&
-      a !== 'https://assets.alicdn.com/kissy/1.0.0/build/imglazyload/spaceball.gif'
-    ) {
-      longImgList = longImgList.concat(a)
+    // 判断src是否为空，并去除无用的图片
+    if (a?.match('imglazyload')) alert('请先手动滑动至页面底部，确保描述图完全加载完毕。')
+    if (a !== undefined && !a.endsWith('getAvatar=avatar')) {
+      longImgList.push(getAliImgOrgUrl(a))
     }
   })
   dev && console.log('longImgList', longImgList)
@@ -92,47 +90,26 @@ async function getTianmaoItem() {
     longImgNameList[index] =
       productItem.value.pagename + ' 描述图' + (index + 1) + element.slice(-4)
     if (ifDownload.value) {
-      GM_download(element, longImgNameList[index])
+      GM_download('https:' + element, longImgNameList[index])
     }
   })
   let longImgNameStr = longImgNameList.join('|')
 
-  async function getBase64Image(src: string) {
-    let response = await fetch(src)
-    let blob = await response.blob()
-    return new Promise((resolve) => {
-      let reader = new FileReader()
-      reader.onloadend = function () {
-        resolve(reader.result)
-      }
-      reader.readAsDataURL(blob)
-    })
-  }
-
-  async function removeDuplicateImages(imgList: string[]) {
-    let base64List = await Promise.all(imgList.map(getBase64Image))
-    let uniqueBase64List = [...new Set(base64List)]
-    let uniqueImgList = []
-    for (let i = 0; i < uniqueBase64List.length; i++) {
-      uniqueImgList[i] = imgList[base64List.indexOf(uniqueBase64List[i])]
-    }
-    return uniqueImgList
-  }
-
   // Load main image
-  let imgList = $('[class^=PicGallery--thumbnailPic], .skuIcon')
-    .map((index, ele) => $(ele).attr('src'))
-    .get()
-  // Add https prefix and remove image compression suffix
-  imgList = imgList.map((element) => 'https:' + element.replace(/\.(jpg|png).*?_\.webp$/, '.$1'))
+  let imgList: string[] = []
+  $('[class^=PicGallery--thumbnailPic], .skuIcon').each((index, ele) => {
+    let src = $(ele).attr('src')
+    if (src) imgList.push(getAliImgOrgUrl(src))
+  })
+  dev && console.log('imgList', imgList)
   // Remove duplicate images
-  imgList = await removeDuplicateImages(imgList)
+  imgList = Array.from(new Set(imgList))
   // Generate filenames
   let imgNameList = imgList.map(
     (element, index) => productItem.value.pagename + (index + 1) + element.slice(-4)
   )
   if (ifDownload.value) {
-    imgNameList.forEach((name, index) => GM_download(imgList[index], name))
+    imgNameList.forEach((name, index) => GM_download('https:' + imgList[index], name))
   }
   let imgNameStr = imgNameList.join('\n')
 
