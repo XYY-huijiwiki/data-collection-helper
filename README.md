@@ -1,6 +1,6 @@
 # data-collection-helper
 
-用于辅助收集羊羊百科所需数据的用户脚本。浏览器安装[油猴插件](https://www.tampermonkey.net)后，[点击这里](https://happy-moss-088a8c603.4.azurestaticapps.net/index.user.js)安装脚本。目前的功能有：
+用于辅助收集羊羊百科所需数据的用户脚本。浏览器安装[油猴插件](https://www.tampermonkey.net)后，[点击这里](https://xyy-huijiwiki.github.io/data-collection-helper/index.user.js)安装脚本。目前的功能有：
 
 - 在优兔的视频列表页面（比如[羊村守护者](https://www.youtube.com/playlist?list=PLCxAtDkpA3f-pJSUtq-gb27ndgVvrav2Z)）批量收集视频信息，可用于快速填写剧集信息。
 - 在淘宝商品详情页面（比如[《筐出未来》2022台历礼盒](https://item.taobao.com/item.htm?id=666003448564)）一键生成[周边页面](https://xyy.huijiwiki.com/wiki/《筐出未来》2022台历礼盒)的wiki代码。
@@ -17,7 +17,7 @@
 ## 常见问题
 
 **无法安装脚本：**
-浏览器需要先安装[油猴插件](https://www.tampermonkey.net)，再安装脚本。脚本体积较大，且[点击安装](https://happy-moss-088a8c603.4.azurestaticapps.net/index.user.js)后没有提示或进度条，请保持网络通畅并耐心等待。
+浏览器需要先安装[油猴插件](https://www.tampermonkey.net)，再安装脚本。脚本体积较大，且[点击安装](https://xyy-huijiwiki.github.io/data-collection-helper/index.user.js)后没有提示或进度条，请保持网络通畅并耐心等待。
 
 **优兔页面不显示脚本启动按钮：**
 优兔网页采用了SPA（单页面应用）技术，有时需要在对应页面刷新一次才能显示脚本启动按钮。（准确来说，是从其他优兔页面进入播放列表页面后，需要刷新一次网页。）

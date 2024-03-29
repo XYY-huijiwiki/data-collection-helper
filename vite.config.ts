@@ -29,8 +29,8 @@ export default defineConfig({
           zh: '一个帮助你从网页上采集数据给羊羊百科用的用户脚本。'
         },
         author: 'Karsten',
-        updateURL: `https://happy-moss-088a8c603.4.azurestaticapps.net/index.meta.js`,
-        downloadURL: `https://happy-moss-088a8c603.4.azurestaticapps.net/index.user.js`,
+        updateURL: `https://xyy-huijiwiki.github.io/data-collection-helper/index.meta.js`,
+        downloadURL: `https://xyy-huijiwiki.github.io/data-collection-helper/index.user.js`,
         match: [
           'http*://www.youtube.com/playlist*',
           'http*://item.taobao.com/item.htm*',
