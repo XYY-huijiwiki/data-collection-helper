@@ -17,7 +17,7 @@
 ## 常见问题
 
 **无法安装脚本：**
-浏览器需要先安装[油猴插件](https://www.tampermonkey.net)，再安装脚本。脚本体积较大，且[点击安装](https://xyy-huijiwiki.github.io/data-collection-helper/index.user.js)后没有提示或进度条，请保持网络通畅并耐心等待。
+浏览器需要先安装[篡改猴](https://www.tampermonkey.net)，再安装脚本。脚本体积较大，且[点击安装](https://xyy-huijiwiki.github.io/data-collection-helper/index.user.js)后没有提示或进度条，请保持网络通畅并耐心等待。
 
 **优兔页面不显示脚本启动按钮：**
 优兔网页采用了SPA（单页面应用）技术，有时需要在对应页面刷新一次才能显示脚本启动按钮。（准确来说，是从其他优兔页面进入播放列表页面后，需要刷新一次网页。）
