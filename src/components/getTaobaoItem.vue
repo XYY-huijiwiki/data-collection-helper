@@ -64,13 +64,18 @@ let ifDownload = ref(false)
 let ifAutoCopy = ref(false)
 let ifGoToWiki = ref(false)
 
+function getTextFromDom(selector: string): string {
+  return document.querySelector(selector)?.textContent || ''
+}
+
 async function getTaobaoItem() {
   // pagename
   productItem.value.pagename =
-    productItem.value.pagename || $("h1[class^='ItemHeader--mainTitle--']").text()
+    productItem.value.pagename || getTextFromDom("h1[class^='ItemTitle--mainTitle--']")
 
   // price
-  productItem.value.price = productItem.value.price || Number($('#J_StrPrice>.tb-rmb-num').text())
+  productItem.value.price =
+    productItem.value.price || Number(getTextFromDom('span[class^="Price--priceText--"]'))
 
   // link
   let link = `https://item.taobao.com/item.htm?id=${new URLSearchParams(location.search).get('id')}`
@@ -103,7 +108,7 @@ async function getTaobaoItem() {
   let imgNameStr = imgNameList.join('\n')
 
   // brand
-  let shopName = $("div[class^='ShopHeader--title--']").text()
+  let shopName = $("span[class^='ShopHeader--shopName--']").text()
   let brand =
     shopName in json.Taobao2Brand
       ? json.Taobao2Brand[shopName as keyof typeof json.Taobao2Brand]
@@ -113,7 +118,7 @@ async function getTaobaoItem() {
   let series = json['series']
   let defaultFeat = ''
   series.forEach((element) => {
-    if ($("div[class^='ItemHeader--mainTitle--']").text().includes(element)) {
+    if ($("h1[class^='ItemTitle--mainTitle--']").text().includes(element)) {
       defaultFeat = element
     }
   })
