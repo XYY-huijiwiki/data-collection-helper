@@ -51,35 +51,44 @@ async function getTianmaoItem() {
   productItem.value.pagename = productItem.value.pagename || '页面名称'
   productItem.value.price =
     productItem.value.price ||
-    $('[class^=Price--originPrice] [class^=Price--priceText--2nLbVda]').text()
+    document.querySelector('[class^=Price--originPrice] [class^=Price--priceText]')?.textContent ||
+    ''
 
   //加载主题信息
   let series = json['series']
   let defaultFeat = ''
   series.forEach((element) => {
-    if ($('[class^=ItemHeader--mainTitle]').text().includes(element)) {
+    if (
+      (document.querySelector('[class^=ItemHeader--mainTitle]')?.textContent || '').includes(
+        element
+      )
+    ) {
       defaultFeat = element
     }
   })
   productItem.value.feat = productItem.value.feat || defaultFeat
 
   //加载品牌信息
-  let shopName = $('[class^=ShopHeader--title]').text()
+  let shopName = document.querySelector('[class^=ShopHeader--shopName]')?.textContent || ''
   let brand =
     shopName in json.Tianmao2Brand
       ? json.Tianmao2Brand[shopName as keyof typeof json.Tianmao2Brand]
       : shopName
+  console.log('shopName', shopName)
 
   //加载链接信息
-  let link = 'https://detail.tmall.com/item.htm?id=' + $('#aliww-click-trigger').attr('data-item')
+  let link =
+    'https://detail.tmall.com/item.htm?id=' +
+    document.querySelector('[data-item]')?.getAttribute('data-item')
 
   //加载描述图
   let longImgList: string[] = []
   $(`[class^='descV8'] img`).each((index, ele) => {
     let a = $(ele).attr('src')
     // 判断src是否为空，并去除无用的图片
-    if (a?.match('imglazyload')) alert('请先手动滑动至页面底部，确保描述图完全加载完毕。')
-    if (a !== undefined && !a.endsWith('getAvatar=avatar')) {
+    if (a?.match('imglazyload')) {
+      alert('请先手动滑动至页面底部，确保描述图完全加载完毕。')
+    } else if (a !== undefined && !a.endsWith('getAvatar=avatar')) {
       longImgList.push(getAliImgOrgUrl(a))
     }
   })
