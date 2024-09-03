@@ -12,6 +12,7 @@ declare module 'vue' {
     GetTaobaoItem: typeof import('./src/components/getTaobaoItem.vue')['default']
     GetTianmaoItem: typeof import('./src/components/getTianmaoItem.vue')['default']
     GetYouTubeList: typeof import('./src/components/getYouTubeList.vue')['default']
+    HomeView: typeof import('./src/components/homeView.vue')['default']
     NAlert: typeof import('naive-ui')['NAlert']
     NButton: typeof import('naive-ui')['NButton']
     NCheckbox: typeof import('naive-ui')['NCheckbox']
@@ -27,6 +28,8 @@ declare module 'vue' {
     NInputGroup: typeof import('naive-ui')['NInputGroup']
     NInputNumber: typeof import('naive-ui')['NInputNumber']
     NMessageProvider: typeof import('naive-ui')['NMessageProvider']
+    NModalProvider: typeof import('naive-ui')['NModalProvider']
     NSpace: typeof import('naive-ui')['NSpace']
+    SettingsView: typeof import('./src/components/settingsView.vue')['default']
   }
 }

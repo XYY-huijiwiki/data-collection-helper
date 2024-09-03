@@ -43,7 +43,6 @@ import { ref } from 'vue'
 import type { Ref } from 'vue'
 import json from '@/json/index.json'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
-import $ from 'jquery/dist/jquery.slim'
 import getAliImgOrgUrl from '@/utils/getAliImgOrgUrl'
 
 const dev = import.meta.env.DEV
@@ -70,45 +69,17 @@ function getTextFromDom(selector: string): string {
 
 async function getTaobaoItem() {
   // pagename
-  productItem.value.pagename =
-    productItem.value.pagename || getTextFromDom("h1[class^='ItemTitle--mainTitle--']")
+  productItem.value.pagename = productItem.value.pagename || document.title.replace('-淘宝网', '')
 
   // price
   productItem.value.price =
-    productItem.value.price || Number(getTextFromDom('span[class^="Price--priceText--"]'))
+    productItem.value.price || Number(getTextFromDom('span[class^="priceText--"]'))
 
   // link
   let link = `https://item.taobao.com/item.htm?id=${new URLSearchParams(location.search).get('id')}`
 
-  // imgs (not long img)
-  let imgElementList = $("img[class^='PicGallery--thumbnailPic--']")
-  let imgs: string[] = []
-  imgElementList.each((index, ele) => {
-    let src = $(ele).attr('src')
-    if (src) imgs.push(src)
-  })
-
-  //收集颜色分类的图片
-  $(`img.skuIcon`).each((index, ele) => {
-    let src = $(ele).attr('src')
-    if (src) imgs.push(src)
-  })
-  //去除重复图片
-  imgs = imgs.map((ele) => getAliImgOrgUrl(ele))
-  imgs = Array.from(new Set(imgs))
-  dev && console.log('imgs', imgs)
-  //排序和下载图片
-  let imgNameList: string[] = [] //图片的文件名列表
-  imgs.forEach((ele, index) => {
-    if (ifDownload.value) {
-      GM_download('https:' + ele, productItem.value.pagename + (index + 1) + ele.slice(-4))
-    }
-    imgNameList = imgNameList.concat(productItem.value.pagename + (index + 1) + ele.slice(-4))
-  })
-  let imgNameStr = imgNameList.join('\n')
-
   // brand
-  let shopName = $("span[class^='ShopHeader--shopName--']").text()
+  let shopName = getTextFromDom("span[class^='shopName--']")
   let brand =
     shopName in json.Taobao2Brand
       ? json.Taobao2Brand[shopName as keyof typeof json.Taobao2Brand]
@@ -118,38 +89,60 @@ async function getTaobaoItem() {
   let series = json['series']
   let defaultFeat = ''
   series.forEach((element) => {
-    if ($("h1[class^='ItemTitle--mainTitle--']").text().includes(element)) {
+    if (getTextFromDom("h1[class^='mainTitle--']").includes(element)) {
       defaultFeat = element
     }
   })
   productItem.value.feat = productItem.value.feat || defaultFeat
 
-  // long img
-  let longImg: string[] = [] //长图的链接列表
-  let longImgList: string[] = [] //长图的文件名列表
-  let longImgStr = '' //长图的文件名字符串
-
-  $('.descV8-container img').each((index, ele) => {
-    let src = $(ele).attr('src')
-    if (src && !src.endsWith('?getAvatar=avatar')) {
-      longImg.push(getAliImgOrgUrl(src))
-    }
+  // imgs
+  let imgElementList = document.querySelectorAll(
+    "img[class^='thumbnailPic--'], img[class^='valueItemImg--']"
+  )
+  let imgsURL: string[] = []
+  imgElementList.forEach((ele) => {
+    let src = ele.getAttribute('src')
+    if (src) imgsURL.push(getAliImgOrgUrl(src))
   })
-  dev && console.log('longImg', longImg)
+  // remove duplicate urls
+  imgsURL = Array.from(new Set(imgsURL))
+  dev && console.log('imgs', imgsURL)
+  // order and download imgs
+  let imgNameList: string[] = [] //图片的文件名列表
+  imgsURL.forEach((ele, index) => {
+    if (ifDownload.value) {
+      GM_download('https:' + ele, productItem.value.pagename + (index + 1) + ele.slice(-4))
+    }
+    imgNameList = imgNameList.concat(productItem.value.pagename + (index + 1) + ele.slice(-4))
+  })
+  // wikitext for imgs
+  let imgNameStr = imgNameList.join('\n')
 
-  //排序和下载长图
-  longImg.forEach((ele, index) => {
+  // desc
+  let descElementList = document.querySelectorAll('#content img')
+  let descImgURL: string[] = []
+  descElementList.forEach((ele) => {
+    let src = ele.getAttribute('src')
+    if (src) descImgURL.push(getAliImgOrgUrl(src))
+  })
+  // remove duplicate urls
+  descImgURL = Array.from(new Set(descImgURL))
+  dev && console.log('descImg', descImgURL)
+  // order and download desc imgs
+  let descImgNameList: string[] = [] //图片的文件名列表
+  descImgURL.forEach((ele, index) => {
     if (ifDownload.value) {
       GM_download(
         'https:' + ele,
         productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)
       )
     }
-    longImgList = longImgList.concat(
+    descImgNameList = descImgNameList.concat(
       productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)
     )
   })
-  longImgStr = longImgList.join('|')
+  // wikitext for desc imgs
+  let descImgNameStr = descImgNameList.join('|')
 
   //等待长图加载完毕后输出结果
   code.value = `{{周边信息\n|版权=\n|尺寸=\n|定价=${
@@ -158,7 +151,7 @@ async function getTaobaoItem() {
     productItem.value.date || ''
   }\n|适龄=\n|条码=\n|主题=${
     productItem.value.feat
-  }\n}}\n\n<gallery>\n${imgNameStr}\n</gallery>\n\n{{长图|${longImgStr}}}\n`
+  }\n}}\n\n<gallery>\n${imgNameStr}\n</gallery>\n\n{{长图|${descImgNameStr}}}\n`
 
   // 如果启用了自动复制，就复制结果
   ifAutoCopy.value ? GM_setClipboard(code.value, 'text/plain') : null
