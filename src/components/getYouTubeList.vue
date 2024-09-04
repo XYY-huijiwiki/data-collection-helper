@@ -13,7 +13,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import $ from 'jquery/dist/jquery.slim'
 
 let dev = import.meta.env.DEV
 let resCode = ref(``)
@@ -22,7 +21,7 @@ function getYouTubeList(type: 'link' | 'title' | 'wiki') {
   dev && console.log('正在获取优兔播放列表……')
 
   // get the DOM list
-  let DOMList = $('a#video-title')
+  let DOMList = document.querySelectorAll('a#video-title')
 
   // check if the page is ready
   if (!DOMList.length) {
@@ -31,16 +30,16 @@ function getYouTubeList(type: 'link' | 'title' | 'wiki') {
   }
 
   // init the result array
-  let res = []
+  let res:{link:string,title:string,wiki:string}[] = []
 
-  for (let index = 0; index < DOMList.length; index++) {
-    const element = DOMList[index]
-    let id = ($(element).attr('href') as string).match(/v=(.*?)&/)![1]
+  DOMList.forEach(element => {
+    let href = element.getAttribute('href')
+    let title = element.getAttribute('title') + ` - YouTube`
+    let id = new URLSearchParams(href?.split('?')[1]).get('v')
     let link = 'https://youtu.be/' + id
-    let title = $(element).attr('title') + ` - YouTube`
     let wiki = `[${link} ${title}]`
     res.push({ link, title, wiki })
-  }
+  })
 
   switch (type) {
     case 'link':

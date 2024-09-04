@@ -28,7 +28,6 @@
 import { ref } from 'vue'
 import json from '@/json/index.json'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
-import $ from 'jquery/dist/jquery.slim'
 import getAliImgOrgUrl from '@/utils/getAliImgOrgUrl'
 
 let dev = import.meta.env.DEV
@@ -44,83 +43,89 @@ let ifDownload = ref(false)
 let ifAutoCopy = ref(false)
 let ifGoToWiki = ref(false)
 
+function getTextFromDom(selector: string): string {
+  return document.querySelector(selector)?.textContent || ''
+}
+
 async function getTianmaoItem() {
-  // 开启加载动画
+  // loading starts
   loading.value = true
 
-  productItem.value.pagename = productItem.value.pagename || '页面名称'
-  productItem.value.price =
-    productItem.value.price ||
-    document.querySelector('[class^=Price--originPrice] [class^=Price--priceText]')?.textContent ||
-    ''
+  // pagename
+  productItem.value.pagename =
+    productItem.value.pagename || document.title.replace('-tmall.com天猫', '')
 
-  //加载主题信息
+  // price
+  productItem.value.price = productItem.value.price || getTextFromDom('span[class^="priceText--"]')
+
+  // link
+  let link = `https://detail.tmall.com/item.htm?id=${new URLSearchParams(location.search).get('id')}`
+
+  // brand
+  let shopName = getTextFromDom("span[class^='shopName--']")
+  let brand =
+    shopName in json.Tianmao2Brand
+      ? json.Tianmao2Brand[shopName as keyof typeof json.Tianmao2Brand]
+      : shopName
+
+  // feat
   let series = json['series']
   let defaultFeat = ''
   series.forEach((element) => {
-    if (
-      (document.querySelector('[class^=ItemHeader--mainTitle]')?.textContent || '').includes(
-        element
-      )
-    ) {
+    if (getTextFromDom("h1[class^='mainTitle--']").includes(element)) {
       defaultFeat = element
     }
   })
   productItem.value.feat = productItem.value.feat || defaultFeat
 
-  //加载品牌信息
-  let shopName = document.querySelector('[class^=ShopHeader--shopName]')?.textContent || ''
-  let brand =
-    shopName in json.Tianmao2Brand
-      ? json.Tianmao2Brand[shopName as keyof typeof json.Tianmao2Brand]
-      : shopName
-  console.log('shopName', shopName)
-
-  //加载链接信息
-  let link =
-    'https://detail.tmall.com/item.htm?id=' +
-    document.querySelector('[data-item]')?.getAttribute('data-item')
-
-  //加载描述图
-  let longImgList: string[] = []
-  $(`[class^='descV8'] img`).each((index, ele) => {
-    let a = $(ele).attr('src')
-    // 判断src是否为空，并去除无用的图片
-    if (a?.match('imglazyload')) {
-      alert('请先手动滑动至页面底部，确保描述图完全加载完毕。')
-    } else if (a !== undefined && !a.endsWith('getAvatar=avatar')) {
-      longImgList.push(getAliImgOrgUrl(a))
-    }
-  })
-  dev && console.log('longImgList', longImgList)
-  //生成文件名
-  let longImgNameList: string[] = []
-  longImgList.forEach((element, index) => {
-    longImgNameList[index] =
-      productItem.value.pagename + ' 描述图' + (index + 1) + element.slice(-4)
-    if (ifDownload.value) {
-      GM_download('https:' + element, longImgNameList[index])
-    }
-  })
-  let longImgNameStr = longImgNameList.join('|')
-
-  // Load main image
-  let imgList: string[] = []
-  $('[class^=PicGallery--thumbnailPic], .skuIcon').each((index, ele) => {
-    let src = $(ele).attr('src')
-    if (src) imgList.push(getAliImgOrgUrl(src))
-  })
-  dev && console.log('imgList', imgList)
-  // Remove duplicate images
-  imgList = Array.from(new Set(imgList))
-  // Generate filenames
-  let imgNameList = imgList.map(
-    (element, index) => productItem.value.pagename + (index + 1) + element.slice(-4)
+  // imgs
+  let imgElementList = document.querySelectorAll(
+    "img[class^='thumbnailPic--'], img[class^='valueItemImg--']"
   )
-  if (ifDownload.value) {
-    imgNameList.forEach((name, index) => GM_download('https:' + imgList[index], name))
-  }
+  let imgsURL: string[] = []
+  imgElementList.forEach((ele) => {
+    let src = ele.getAttribute('src')
+    if (src) imgsURL.push(getAliImgOrgUrl(src))
+  })
+  // remove duplicate urls
+  imgsURL = Array.from(new Set(imgsURL))
+  dev && console.log('imgs', imgsURL)
+  // order and download imgs
+  let imgNameList: string[] = [] //图片的文件名列表
+  imgsURL.forEach((ele, index) => {
+    if (ifDownload.value) {
+      GM_download('https:' + ele, productItem.value.pagename + (index + 1) + ele.slice(-4))
+    }
+    imgNameList = imgNameList.concat(productItem.value.pagename + (index + 1) + ele.slice(-4))
+  })
+  // wikitext for imgs
   let imgNameStr = imgNameList.join('\n')
+
+  // desc
+  let descElementList = document.querySelectorAll('#content img')
+  let descImgURL: string[] = []
+  descElementList.forEach((ele) => {
+    let src = ele.getAttribute('src')
+    if (src) descImgURL.push(getAliImgOrgUrl(src))
+  })
+  // remove duplicate urls
+  descImgURL = Array.from(new Set(descImgURL))
+  dev && console.log('descImg', descImgURL)
+  // order and download desc imgs
+  let descImgNameList: string[] = [] //图片的文件名列表
+  descImgURL.forEach((ele, index) => {
+    if (ifDownload.value) {
+      GM_download(
+        'https:' + ele,
+        productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)
+      )
+    }
+    descImgNameList = descImgNameList.concat(
+      productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)
+    )
+  })
+  // wikitext for desc imgs
+  let descImgNameStr = descImgNameList.join('|')
 
   //等待长图加载完毕后输出结果
   code.value = `{{周边信息\n|版权=\n|尺寸=\n|定价=${
@@ -129,7 +134,7 @@ async function getTianmaoItem() {
     productItem.value.date || ''
   }\n|适龄=\n|条码=\n|主题=${
     productItem.value.feat
-  }\n}}\n\n<gallery>\n${imgNameStr}\n</gallery>\n\n{{长图|${longImgNameStr}}}\n`
+  }\n}}\n\n<gallery>\n${imgNameStr}\n</gallery>\n\n{{长图|${descImgNameStr}}}\n`
 
   // 如果启用了自动复制，就复制结果
   ifAutoCopy.value ? GM_setClipboard(code.value, 'text/plain') : null

@@ -18,9 +18,6 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@types/jquery": "^3.5.19",
-    "hotkeys-js": "^3.13.7",
-    "jquery": "^3.7.1",
     "mustache": "^4.2.0",
     "pinia": "^2.1.6",
     "vue": "^3.3.4"

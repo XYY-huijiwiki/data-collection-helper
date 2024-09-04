@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import $ from 'jquery/dist/jquery.slim'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import mustache from 'mustache'
 import { ref } from 'vue'
@@ -50,10 +49,14 @@ async function getDangdangItem() {
   // deal with package, isbn, size, paper
   // get additional info of isSet and setName
   let detail_describe_arr: [string, string][] = []
-  $('#detail_describe ul.key.clearfix li').each((i, e) => {
-    let string = $(e).text().trim()
-    let arr = string.split('：')
-    detail_describe_arr.push([arr[0], arr[1]])
+  document.querySelectorAll('#detail_describe ul.key.clearfix li').forEach((e) => {
+    let string = e.textContent?.trim()
+    if (!string?.match(/：/)) {
+      console.warn(`no colon matched`)
+    } else {
+      let [key, value] = string.split('：')
+      detail_describe_arr.push([key, value])
+    }
   })
   let detail_describe = Object.fromEntries(detail_describe_arr)
   if (detail_describe?.['是否套装'] === '是') {
@@ -70,18 +73,21 @@ async function getDangdangItem() {
     .replace(detail_describe?.[`丛书名`], '')
     .replace(/：| |:|·/, '')
     .trim()
-  bookInfo.author = $(`a[dd_name="作者"]`).text().trim()
-  bookInfo.publisher = $(`a[dd_name="出版社"]`).text().trim()
-  bookInfo.price = $('#original-price').text().trim()
-  bookInfo.description = $('#content .descrip').text().trim()
-  bookInfo.contents = $('#catalog .descrip').text().trim().replace(/\n/g, '\n* ')
+  bookInfo.author = document.querySelector('span[dd_name="作者"]')?.textContent?.trim().slice(3) // string for the author starts with `作者：` which has 3 characters to be removed
+  bookInfo.publisher = document.querySelector('a[dd_name="出版社"]')?.textContent?.trim()
+  bookInfo.price = document.querySelector('#original-price')?.textContent?.trim()
+  bookInfo.description = document.querySelector('#content .descrip')?.textContent?.trim()
+  bookInfo.contents = document
+    .querySelector('#catalog .descrip')
+    ?.textContent?.trim()
+    .replace(/\n/g, '\n* ')
 
   // deal with samples
   let samples: string[] = []
-  $('#attachImage-show-all img').each((i, e) => {
-    let link = $(e).attr('src')
+  document.querySelectorAll('#attachImage-show-all img').forEach((e, i) => {
+    let link = e.getAttribute('src')
     if (!link) {
-      message.error(`image not found (${e})`)
+      console.error(`image not found (${e})`)
       return
     }
     let name = bookInfo.fullname + ' 试读' + (i + 1).toString() + link.slice(link.lastIndexOf('.'))
@@ -92,20 +98,14 @@ async function getDangdangItem() {
 
   // deal with images
   let imgURLs: string[] = []
-  $(`#main-img-slider img`).each((i, e) => {
-    let link = $(e).attr('src')
+  document.querySelectorAll('#main-img-slider img').forEach((e) => {
+    let link = e.getAttribute('src')
     if (!link) {
-      message.error(`image not found (${e})`)
-      return
+      console.warn(`image not found (${e})`)
+    } else {
+      let newLink = `https:${link}`.replace('_x_', '_u_')
+      imgURLs.push(newLink)
     }
-    // regex comes from https://github.com/qsniyg/maxurl
-    let newLink = `https:${link}`
-      .replace(
-        /(\/[0-9]{2}\/+[0-9]{2}\/+[0-9]+-[0-9]+)_[a-z]_([0-9]+\.[^/.]+)(?:[?#].*)?$/,
-        '$1_o_$2'
-      )
-      .replace(/(:\/\/[^/]+\/+[0-9]+)_[a-z](\.[^/.]+)(?:[?#].*)?$/, '$1$2')
-    imgURLs.push(newLink)
   })
   imgURLs = [...new Set(imgURLs)] // remove duplicates imgURL
   let imgNames: string[] = []
@@ -124,14 +124,18 @@ async function getDangdangItem() {
   bookInfo.gallery = imgNames.join('\n')
 
   // deal with date
-  let dateStr = $(`div.messbox_info>span.t1:not([dd_name])`)
-    .text()
-    .replace(/出版时间:/, '')
+  let dateStr = document
+    .querySelector('div.messbox_info > span.t1:not([dd_name])')
+    ?.textContent?.replace(/出版时间:/, '')
     .trim()
-  let year = Number(dateStr.match(/([0-9]{4})年/)?.[1]) || 1970
-  let month = Number(dateStr.match(/([0-9]{1,2})月/)?.[1]) || 1
-  let day = 1
-  bookInfo.date = new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10)
+  if (!dateStr) {
+    console.warn(`date not found`)
+  } else {
+    let year = Number(dateStr.match(/([0-9]{4})年/)?.[1]) || 1970
+    let month = Number(dateStr.match(/([0-9]{1,2})月/)?.[1]) || 1
+    let day = 1
+    bookInfo.date = new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10)
+  }
 
   // end of data getting
   dev && console.log(bookInfo)

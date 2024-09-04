@@ -4,7 +4,7 @@
     :default-width="480"
     resizable
     placement="right"
-    z-index="10002"
+    z-index="10020"
     :auto-focus="false"
     display-directive="show"
   >
@@ -45,7 +45,6 @@
 import { useModal } from 'naive-ui'
 import { GM_registerMenuCommand } from 'vite-plugin-monkey/dist/client'
 import { ref, h } from 'vue'
-import hotkeys from 'hotkeys-js'
 import settingsView from '@/components/settingsView.vue'
 
 let dev = import.meta.env.DEV
@@ -72,10 +71,12 @@ GM_registerMenuCommand('打开羊羊百科小助手', () => {
   showDrawer.value = true
 })
 
-hotkeys('tab', function (event) {
-  event.preventDefault()
-  showDrawer.value = true
-})
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Tab') {
+    event.preventDefault();
+    showDrawer.value = !showDrawer.value;
+  }
+});
 
 dev && console.log(currentSite)
 
