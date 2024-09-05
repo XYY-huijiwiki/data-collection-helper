@@ -25,12 +25,10 @@
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import mustache from 'mustache'
 import { ref } from 'vue'
-import { useMessage } from 'naive-ui'
 import template from '@/templates/getDangdangItem.mustache?raw'
 let dev = import.meta.env.DEV
 dev && console.log(template)
 
-let message = useMessage()
 let code = ref('') // code to be shown
 let ifDownload = ref(false) // if download needed images
 let ifAutoCopy = ref(false) // if auto copy code after getting
@@ -60,7 +58,7 @@ async function getDangdangItem() {
   })
   let detail_describe = Object.fromEntries(detail_describe_arr)
   if (detail_describe?.['是否套装'] === '是') {
-    message.error('Please do not use this script on set items.')
+    alert('Please do not use this script on set items.')
     return
   }
   bookInfo.size = detail_describe?.['开 本']

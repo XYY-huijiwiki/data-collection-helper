@@ -33,7 +33,7 @@
             target="_blank"
             >羊羊百科</n-button
           >
-          <n-button @click="openSettingsModal">设置</n-button>
+          <n-button disabled>设置</n-button>
         </n-space>
       </template>
     </n-drawer-content>
@@ -41,10 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { useModal } from 'naive-ui'
 import { GM_registerMenuCommand } from 'vite-plugin-monkey/dist/client'
-import { ref, h } from 'vue'
-import SettingsView from '@/components/SettingsView.vue'
+import { ref } from 'vue'
 
 let dev = import.meta.env.DEV
 let showDrawer = ref(false)
@@ -78,19 +76,6 @@ document.addEventListener('keydown', function(event) {
 });
 
 dev && console.log(currentSite)
-
-// settings view
-let modal = useModal()
-let openSettingsModal = () => {
-  modal.create({
-    title: '设置',
-    preset: 'dialog',
-    showIcon: false,
-    autoFocus: false,
-    zIndex: 10002,
-    content: () => h(SettingsView)
-  })
-}
 </script>
 
 <style scoped></style>

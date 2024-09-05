@@ -8,15 +8,7 @@ import { zhCN, dateZhCN, useOsTheme, darkTheme } from 'naive-ui'
     :locale="zhCN"
     :date-locale="dateZhCN"
   >
-    <n-message-provider
-      container-style="z-index: 10020"
-      keep-alive-on-hover
-      placement="top-right"
-    >
-      <n-modal-provider>
-        <home-view />
-      </n-modal-provider>
-    </n-message-provider>
+    <home-view />
   </n-config-provider>
 </template>
 
