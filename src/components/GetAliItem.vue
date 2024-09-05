@@ -29,7 +29,7 @@
           <n-checkbox v-model:checked="ifAutoCopy" style="flex-grow: 1"> 自动复制 </n-checkbox>
           <n-checkbox v-model:checked="ifGoToWiki" style="flex-grow: 1"> 跳转百科 </n-checkbox>
         </n-form-item>
-        <n-button @click="getTaobaoItem()" :loading="loading" type="primary" style="width: 100%">
+        <n-button @click="getAliItem()" :loading="loading" type="primary" style="width: 100%">
           获取信息
         </n-button>
       </n-form>
@@ -67,9 +67,9 @@ function getTextFromDom(selector: string): string {
   return document.querySelector(selector)?.textContent || ''
 }
 
-async function getTaobaoItem() {
+async function getAliItem() {
   // pagename
-  productItem.value.pagename = productItem.value.pagename || document.title.replace('-淘宝网', '')
+  productItem.value.pagename = productItem.value.pagename || document.title.replace('-淘宝网', '').replace('-tmall.com天猫', '')
 
   // price
   productItem.value.price =

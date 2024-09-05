@@ -14,11 +14,10 @@
       :native-scrollbar="false"
       :scrollbar-props="{ 'x-scrollable': true }"
     >
-      <getYouTubeList v-if="currentSite === `优兔`" />
-      <getMgtvList v-if="currentSite === `芒果TV`" />
-      <getTaobaoItem v-if="currentSite === `淘宝`" />
-      <getTianmaoItem v-if="currentSite === `天猫`" />
-      <getDangdangItem v-if="currentSite === `当当网`" />
+      <get-youtube-list v-if="currentSite === `优兔`" />
+      <get-mgtv-list v-if="currentSite === `芒果TV`" />
+      <get-ali-item v-if="currentSite === `淘宝`||currentSite ===`天猫`" />
+      <get-dangdang-item v-if="currentSite === `当当网`" />
 
       <template #footer>
         <n-space>
@@ -45,7 +44,7 @@
 import { useModal } from 'naive-ui'
 import { GM_registerMenuCommand } from 'vite-plugin-monkey/dist/client'
 import { ref, h } from 'vue'
-import settingsView from '@/components/settingsView.vue'
+import SettingsView from '@/components/SettingsView.vue'
 
 let dev = import.meta.env.DEV
 let showDrawer = ref(false)
@@ -89,7 +88,7 @@ let openSettingsModal = () => {
     showIcon: false,
     autoFocus: false,
     zIndex: 10002,
-    content: () => h(settingsView)
+    content: () => h(SettingsView)
   })
 }
 </script>

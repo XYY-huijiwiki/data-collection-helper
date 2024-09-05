@@ -26,7 +26,7 @@ import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import mustache from 'mustache'
 import { ref } from 'vue'
 import { useMessage } from 'naive-ui'
-import template from '@/template/getDangdangItem.mustache?raw'
+import template from '@/templates/getDangdangItem.mustache?raw'
 let dev = import.meta.env.DEV
 dev && console.log(template)
 
