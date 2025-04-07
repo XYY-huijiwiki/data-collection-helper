@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <n-space vertical>
+    <n-flex vertical>
       <n-alert :show-icon="false" title="获取商品数据">
         使用下列功能时请务必先手动滑动至页面底部，确保描述图完全加载完毕。
       </n-alert>
@@ -33,19 +32,19 @@
           获取信息
         </n-button>
       </n-form>
-      <n-code :code="code" word-wrap style="user-select: all" />
-    </n-space>
-  </div>
+      <code-block :code="code" lang="wiki" v-if="code" />
+    </n-flex>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Ref } from 'vue'
-import json from '@/json/index.json'
+import { data } from '@/json/index'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import getAliImgOrgUrl from '@/utils/getAliImgOrgUrl'
 
 const dev = import.meta.env.DEV
+let site: 'Taobao' | 'Tmall' = location.hostname.includes('taobao') ? 'Taobao' : 'Tmall'
 let code = ref('')
 let loading = ref(false)
 let productItem: Ref<{
@@ -69,7 +68,9 @@ function getTextFromDom(selector: string): string {
 
 async function getAliItem() {
   // pagename
-  productItem.value.pagename = productItem.value.pagename || document.title.replace('-淘宝网', '').replace('-tmall.com天猫', '')
+  productItem.value.pagename =
+    productItem.value.pagename ||
+    document.title.replace('-淘宝网', '').replace('-tmall.com天猫', '')
 
   // price
   productItem.value.price =
@@ -81,12 +82,12 @@ async function getAliItem() {
   // brand
   let shopName = getTextFromDom("span[class^='shopName--']")
   let brand =
-    shopName in json.Taobao2Brand
-      ? json.Taobao2Brand[shopName as keyof typeof json.Taobao2Brand]
-      : shopName
+    (site === 'Taobao'
+      ? (data.Taobao2Brand as Record<string, string>)?.[shopName]
+      : (data.Tmall2Brand as Record<string, string>)?.[shopName]) ?? shopName
 
   // feat
-  let series = json['series']
+  let series = data['series']
   let defaultFeat = ''
   series.forEach((element) => {
     if (getTextFromDom("h1[class^='mainTitle--']").includes(element)) {
@@ -97,7 +98,7 @@ async function getAliItem() {
 
   // imgs
   let imgElementList = document.querySelectorAll(
-    "img[class^='thumbnailPic--'], img[class^='valueItemImg--']"
+    "img[class*='--thumbnailPic--'], img[class^='valueItemImg--']"
   )
   let imgsURL: string[] = []
   imgElementList.forEach((ele) => {

@@ -12,27 +12,21 @@
       title="羊羊百科小助手"
       closable
       :native-scrollbar="false"
-      :scrollbar-props="{ 'x-scrollable': true }"
     >
       <get-youtube-list v-if="currentSite === `优兔`" />
       <get-mgtv-list v-if="currentSite === `芒果TV`" />
-      <get-ali-item v-if="currentSite === `淘宝`||currentSite ===`天猫`" />
+      <get-ali-item v-if="currentSite === `淘宝` || currentSite === `天猫`" />
       <get-dangdang-item v-if="currentSite === `当当网`" />
 
       <template #footer>
         <n-space>
           <n-button
             tag="a"
-            href="https://github.com/XYY-huijiwiki/XYY-huijiwiki-helper"
+            href="https://github.com/XYY-huijiwiki/data-collection-helper"
             target="_blank"
-            >Github</n-button
           >
-          <n-button
-            tag="a"
-            href="https://club.huijiwiki.com/wiki/特殊:驾驶室#/user/47472"
-            target="_blank"
-            >羊羊百科</n-button
-          >
+            Github
+          </n-button>
           <n-button disabled>设置</n-button>
         </n-space>
       </template>
@@ -68,12 +62,12 @@ GM_registerMenuCommand('打开羊羊百科小助手', () => {
   showDrawer.value = true
 })
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
   if (event.key === 'Tab') {
-    event.preventDefault();
-    showDrawer.value = !showDrawer.value;
+    event.preventDefault()
+    showDrawer.value = !showDrawer.value
   }
-});
+})
 
 dev && console.log(currentSite)
 </script>
