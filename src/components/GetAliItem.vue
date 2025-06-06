@@ -1,39 +1,39 @@
 <template>
-    <n-flex vertical>
-      <n-alert :show-icon="false" title="获取商品数据">
-        使用下列功能时请务必先手动滑动至页面底部，确保描述图完全加载完毕。
-      </n-alert>
-      <n-form>
-        <n-form-item label="页面名称">
-          <n-input v-model:value="productItem.pagename" />
-        </n-form-item>
-        <n-form-item label="原价价格" required>
-          <n-input-number
-            v-model:value="productItem.price"
-            :show-button="false"
-            style="flex-grow: 1"
-          />
-        </n-form-item>
-        <n-form-item label="发售日期" required>
-          <n-date-picker
-            v-model:formatted-value="productItem.date"
-            value-format="yyyy-MM-dd"
-            type="date"
-            clearable
-            style="flex-grow: 1"
-          />
-        </n-form-item>
-        <n-form-item label="其他设置">
-          <n-checkbox v-model:checked="ifDownload" style="flex-grow: 1"> 下载图片 </n-checkbox>
-          <n-checkbox v-model:checked="ifAutoCopy" style="flex-grow: 1"> 自动复制 </n-checkbox>
-          <n-checkbox v-model:checked="ifGoToWiki" style="flex-grow: 1"> 跳转百科 </n-checkbox>
-        </n-form-item>
-        <n-button @click="getAliItem()" :loading="loading" type="primary" style="width: 100%">
-          获取信息
-        </n-button>
-      </n-form>
-      <code-block :code="code" v-show="code" />
-    </n-flex>
+  <n-flex vertical>
+    <n-alert :show-icon="false" title="获取商品数据">
+      使用下列功能时请务必先手动滑动至页面底部，确保描述图完全加载完毕。
+    </n-alert>
+    <n-form>
+      <n-form-item label="页面名称">
+        <n-input v-model:value="productItem.pagename" />
+      </n-form-item>
+      <n-form-item label="原价价格" required>
+        <n-input-number
+          v-model:value="productItem.price"
+          :show-button="false"
+          style="flex-grow: 1"
+        />
+      </n-form-item>
+      <n-form-item label="发售日期" required>
+        <n-date-picker
+          v-model:formatted-value="productItem.date"
+          value-format="yyyy-MM-dd"
+          type="date"
+          clearable
+          style="flex-grow: 1"
+        />
+      </n-form-item>
+      <n-form-item label="其他设置">
+        <n-checkbox v-model:checked="ifDownload" style="flex-grow: 1"> 下载图片 </n-checkbox>
+        <n-checkbox v-model:checked="ifAutoCopy" style="flex-grow: 1"> 自动复制 </n-checkbox>
+        <n-checkbox v-model:checked="ifGoToWiki" style="flex-grow: 1"> 跳转百科 </n-checkbox>
+      </n-form-item>
+      <n-button @click="getAliItem()" :loading="loading" type="primary" style="width: 100%">
+        获取信息
+      </n-button>
+    </n-form>
+    <code-block :code="code" v-show="code" />
+  </n-flex>
 </template>
 
 <script setup lang="ts">
@@ -74,13 +74,18 @@ async function getAliItem() {
 
   // price
   productItem.value.price =
-    productItem.value.price || Number(getTextFromDom('span[class^="priceText--"]'))
+    productItem.value.price ||
+    Number(getTextFromDom('div[class*="--subPrice--"] span:nth-child(3)'))
 
   // link
-  let link = `https://item.taobao.com/item.htm?id=${new URLSearchParams(location.search).get('id')}`
+  let link =
+    site === 'Taobao'
+      ? new URL('https://item.taobao.com/item.htm')
+      : new URL('https://detail.tmall.com/item.htm')
+  link.searchParams.set('id', new URLSearchParams(location.search).get('id') || '')
 
   // brand
-  let shopName = getTextFromDom("span[class^='shopName--']")
+  let shopName = getTextFromDom("span[class*='--shopName--']")
   let brand =
     (site === 'Taobao'
       ? (data.Taobao2Brand as Record<string, string>)?.[shopName]
@@ -90,7 +95,7 @@ async function getAliItem() {
   let series = data['series']
   let defaultFeat = ''
   series.forEach((element) => {
-    if (getTextFromDom("h1[class^='mainTitle--']").includes(element)) {
+    if (getTextFromDom("h1[class*='--mainTitle--']").includes(element)) {
       defaultFeat = element
     }
   })
@@ -98,7 +103,7 @@ async function getAliItem() {
 
   // imgs
   let imgElementList = document.querySelectorAll(
-    "img[class*='--thumbnailPic--'], img[class^='valueItemImg--']"
+    "img[class*='--thumbnailPic--'], img[class*='--valueItemImg--']"
   )
   let imgsURL: string[] = []
   imgElementList.forEach((ele) => {
@@ -128,6 +133,13 @@ async function getAliItem() {
   })
   // remove duplicate urls
   descImgURL = Array.from(new Set(descImgURL))
+  // remove known non-desc imgs
+  let descImgBlackList = [
+    '//img.alicdn.com/imgextra/i3/O1CN01XU1Y2d1Sk7fIMOkeU_!!6000000002284-2-tps-1125-1446.png'
+  ]
+  descImgBlackList.forEach((ele) => {
+    descImgURL = descImgURL.filter((url) => url !== getAliImgOrgUrl(ele))
+  })
   dev && console.log('descImg', descImgURL)
   // order and download desc imgs
   let descImgNameList: string[] = [] //图片的文件名列表
@@ -148,7 +160,7 @@ async function getAliItem() {
   //等待长图加载完毕后输出结果
   code.value = `{{周边信息\n|版权=\n|尺寸=\n|定价=${
     productItem.value.price
-  }\n|货号=\n|链接（京东）=\n|链接（乐乎市集）=\n|链接（奇货）=\n|链接（淘宝）=${link}\n|链接（天猫）=\n|链接（玩具反斗城）=\n|品牌=${brand}\n|日期=${
+  }\n|货号=\n|链接（京东）=\n|链接（乐乎市集）=\n|链接（奇货）=\n|链接（淘宝）=${site === 'Taobao' ? link : ''}\n|链接（天猫）=${site === 'Tmall' ? link : ''}\n|链接（玩具反斗城）=\n|品牌=${brand}\n|日期=${
     productItem.value.date || ''
   }\n|适龄=\n|条码=\n|主题=${
     productItem.value.feat
