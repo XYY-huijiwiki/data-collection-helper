@@ -1,12 +1,12 @@
 <template>
   <div>
     <n-h2>获取视频列表数据</n-h2>
-    <n-space>
+    <n-flex>
       <n-button @click="getYouTubeList(`link`)">获取链接</n-button>
       <n-button @click="getYouTubeList(`title`)">获取标题</n-button>
       <n-button @click="getYouTubeList(`wiki`)">获取wikitext链接</n-button>
       <n-button @click="resCode = ``">清空</n-button>
-    </n-space>
+    </n-flex>
     <n-code :code="resCode" />
   </div>
 </template>

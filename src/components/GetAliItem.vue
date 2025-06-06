@@ -32,7 +32,7 @@
           获取信息
         </n-button>
       </n-form>
-      <code-block :code="code" lang="wiki" v-if="code" />
+      <code-block :code="code" v-show="code" />
     </n-flex>
 </template>
 

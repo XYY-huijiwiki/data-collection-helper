@@ -1,11 +1,11 @@
 <template>
   <div>
     <n-h2>获取视频列表数据</n-h2>
-    <n-space>
+    <n-flex>
       <n-button :loading="loading" @click="getMgtvList(`link`)">获取链接</n-button>
       <n-button :loading="loading" @click="getMgtvList(`title`)">获取标题</n-button>
       <n-button :loading="loading" @click="resCode = ``">清空</n-button>
-    </n-space>
+    </n-flex>
     <n-code :code="resCode" />
   </div>
 </template>

@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <n-space vertical>
+    <n-flex vertical>
       <n-alert :show-icon="false">
         使用前请先将页面滑动到底部，等待页面彻底加载完毕。如果有试读部分，还需要先点击“显示全部信息”。
       </n-alert>
@@ -11,14 +10,13 @@
         />
         <n-button @click="getDangdangItem()">获取信息</n-button>
       </n-input-group>
-      <n-space justify="space-between">
+      <n-flex justify="space-between">
         <n-checkbox v-model:checked="ifDownload">下载图片</n-checkbox>
         <n-checkbox v-model:checked="ifAutoCopy">自动复制</n-checkbox>
         <n-checkbox v-model:checked="ifGoToWiki">跳转百科</n-checkbox>
-      </n-space>
-      <n-code :code="code" word-wrap style="user-select: all" />
-    </n-space>
-  </div>
+      </n-flex>
+      <code-block :code="code"/>
+    </n-flex>
 </template>
 
 <script setup lang="ts">

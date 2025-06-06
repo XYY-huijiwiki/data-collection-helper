@@ -4,7 +4,7 @@
     :default-width="480"
     resizable
     placement="right"
-    z-index="10020"
+    :z-index="10020"
     :auto-focus="false"
     display-directive="show"
   >
@@ -19,7 +19,7 @@
       <get-dangdang-item v-if="currentSite === `当当网`" />
 
       <template #footer>
-        <n-space>
+        <n-flex>
           <n-button
             tag="a"
             href="https://github.com/XYY-huijiwiki/data-collection-helper"
@@ -28,7 +28,7 @@
             Github
           </n-button>
           <n-button disabled>设置</n-button>
-        </n-space>
+        </n-flex>
       </template>
     </n-drawer-content>
   </n-drawer>

@@ -1,7 +1,7 @@
 <template>
-  <div :class="`language-${lang}`">
+  <div :class="`language-wiki`">
     <button title="Copy Code" class="copy" @click="copyToClipboard(code)"></button>
-    <span class="lang">{{ lang }}</span>
+    <span class="lang">wiki</span>
     <n-scrollbar x-scrollable>
       <component :is="vnode" />
     </n-scrollbar>
@@ -9,33 +9,41 @@
 </template>
 
 <script setup lang="ts">
-import { computedAsync } from '@vueuse/core'
-import { codeToHtml } from 'shiki'
+import { createHighlighterCore } from 'shiki/core'
+import { computedAsync, usePreferredDark } from '@vueuse/core'
 import { h } from 'vue'
 import { NScrollbar } from 'naive-ui'
+import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
+import wikiLang from '@shikijs/langs/wikitext'
+import htmlLang from '@shikijs/langs/html'
+import lightTheme from '@shikijs/themes/light-plus'
+import darkTheme from '@shikijs/themes/dark-plus'
 
-const { code, lang } = defineProps({
+const isDark = usePreferredDark()
+
+// Cache the highlighter instance
+const highlighterPromise = createHighlighterCore({
+  langs: [wikiLang, htmlLang],
+  themes: [lightTheme, darkTheme],
+  engine: createJavaScriptRegexEngine()
+})
+
+async function highlightCode(code: string, isDark: boolean) {
+  const highlighter = await highlighterPromise
+  return highlighter.codeToHtml(code, { lang: 'wiki', theme: isDark ? 'dark-plus' : 'light-plus' })
+}
+
+const { code } = defineProps({
   code: {
     type: String,
     required: true
-  },
-  lang: {
-    type: String,
-    required: false,
-    default: 'text'
   }
 })
 
 const vnode = computedAsync(async () => {
-  // generate html string
-  const html = await codeToHtml(code, {
-    lang: lang,
-    themes: {
-      light: 'light-plus',
-      dark: 'dark-plus'
-    }
-  })
-  // convert html string to vnode
+  // Generate HTML string using the cached highlighter
+  const html = await highlightCode(code, isDark.value)
+  // Convert HTML string to vnode
   const wrapped = h('div', { innerHTML: html })
   if (!wrapped.children) {
     return wrapped
