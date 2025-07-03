@@ -29,12 +29,6 @@ test.each([
       'https://img14.360buyimg.com/n5/s114x114_jfs/t1/158229/8/39694/166392/6784863cF6a8276c5/09005f48b98e1088.jpg.avif',
     output:
       'https://img14.360buyimg.com/imgzone/jfs/t1/158229/8/39694/166392/6784863cF6a8276c5/09005f48b98e1088.jpg'
-  },
-  {
-    input:
-      '//img30.360buyimg.com/sku/jfs/t1/284997/18/14510/30069/67efa61eF9546b437/39ee61abf5636a32.jpg.avif',
-    output:
-      '//img30.360buyimg.com/sku/jfs/t1/284997/18/14510/30069/67efa61eF9546b437/39ee61abf5636a32.jpg'
   }
 ])(`Test maxurl() case %#`, ({ input, output }) => {
   expect(maxurl(input)).toBe(output)

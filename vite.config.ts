@@ -29,7 +29,7 @@ export default defineConfig({
           zh: '一个帮助你从网页上采集数据给羊羊百科用的用户脚本。'
         },
         author: 'Karsten',
-        source: 'https://github.com/XYY-huijiwiki/XYY-huijiwiki-helper',
+        source: 'https://github.com/XYY-huijiwiki/data-collection-helper',
         updateURL: `https://xyy-huijiwiki.github.io/data-collection-helper/index.meta.js`,
         downloadURL: `https://xyy-huijiwiki.github.io/data-collection-helper/index.user.js`,
         match: [
