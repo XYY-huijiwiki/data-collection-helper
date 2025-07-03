@@ -158,7 +158,8 @@ async function getJDItem() {
       brand: brand,
       date: productItem.value.date || '',
       mainImages: imgNameStr,
-      descImages: descImgNameStr
+      descImages: descImgNameStr,
+      feature: productItem.value.feat
     },
     {},
     ['<<', '>>']

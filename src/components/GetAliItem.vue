@@ -42,6 +42,9 @@ import type { Ref } from 'vue'
 import { data } from '@/json/index'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import maxurl, { add_http } from '@/utils/maxurl'
+import template from '@/templates/product_page.mustache?raw'
+import mustache from 'mustache'
+import { features } from 'process'
 
 const dev = import.meta.env.DEV
 let site: 'Taobao' | 'Tmall' = location.hostname.includes('taobao') ? 'Taobao' : 'Tmall'
@@ -157,15 +160,21 @@ async function getAliItem() {
   // wikitext for desc imgs
   let descImgNameStr = descImgNameList.join('|')
 
-  //等待长图加载完毕后输出结果
-  code.value = `{{周边信息\n|版权=\n|尺寸=\n|定价=${
-    productItem.value.price
-  }\n|货号=\n|链接（京东）=\n|链接（乐乎市集）=\n|链接（奇货）=\n|链接（淘宝）=${site === 'Taobao' ? link : ''}\n|链接（天猫）=${site === 'Tmall' ? link : ''}\n|链接（玩具反斗城）=\n|品牌=${brand}\n|日期=${
-    productItem.value.date || ''
-  }\n|适龄=\n|条码=\n|主题=${
-    productItem.value.feat
-  }\n}}\n\n<gallery>\n${imgNameStr}\n</gallery>\n\n{{长图|${descImgNameStr}}}\n`
-
+  code.value = mustache.render(
+    template,
+    {
+      taobaoLink: site === 'Taobao' ? link.toString() : '',
+      tmallLink: site === 'Tmall' ? link.toString() : '',
+      price: productItem.value.price,
+      brand: brand,
+      date: productItem.value.date || '',
+      mainImages: imgNameStr,
+      descImages: descImgNameStr,
+      feature: productItem.value.feat
+    },
+    {},
+    ['<<', '>>']
+  )
   // 如果启用了自动复制，就复制结果
   ifAutoCopy.value ? GM_setClipboard(code.value, 'text/plain') : null
 
