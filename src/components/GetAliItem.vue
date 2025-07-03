@@ -138,7 +138,8 @@ async function getAliItem() {
   descImgURL = Array.from(new Set(descImgURL))
   // remove known non-desc imgs
   let descImgBlackList = [
-    '//img.alicdn.com/imgextra/i3/O1CN01XU1Y2d1Sk7fIMOkeU_!!6000000002284-2-tps-1125-1446.png'
+    'http://img.alicdn.com/imgextra/i3/O1CN01XU1Y2d1Sk7fIMOkeU_!!6000000002284-2-tps-1125-1446.png',
+    'http://g.alicdn.com/s.gif'
   ]
   descImgBlackList.forEach((ele) => {
     descImgURL = descImgURL.filter((url) => url !== maxurl(add_http(ele)))
@@ -148,10 +149,7 @@ async function getAliItem() {
   let descImgNameList: string[] = [] //图片的文件名列表
   descImgURL.forEach((ele, index) => {
     if (ifDownload.value) {
-      GM_download(
-        'https:' + ele,
-        productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)
-      )
+      GM_download(ele, productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4))
     }
     descImgNameList = descImgNameList.concat(
       productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)
