@@ -8,15 +8,12 @@
     :auto-focus="false"
     display-directive="show"
   >
-    <n-drawer-content
-      title="羊羊百科小助手"
-      closable
-      :native-scrollbar="false"
-    >
+    <n-drawer-content title="羊羊百科小助手" closable :native-scrollbar="false">
       <get-youtube-list v-if="currentSite === `优兔`" />
       <get-mgtv-list v-if="currentSite === `芒果TV`" />
       <get-ali-item v-if="currentSite === `淘宝` || currentSite === `天猫`" />
       <get-dangdang-item v-if="currentSite === `当当网`" />
+      <get-jd-item v-if="currentSite === `京东`" />
 
       <template #footer>
         <n-flex>
@@ -56,6 +53,9 @@ if (location.href.match(/www.mgtv.com\/h\/*/)) {
 }
 if (location.host === 'product.dangdang.com') {
   currentSite = '当当网'
+}
+if (location.href.match(/item.jd.com\/*/)) {
+  currentSite = '京东'
 }
 
 GM_registerMenuCommand('打开羊羊百科小助手', () => {

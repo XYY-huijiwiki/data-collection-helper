@@ -28,7 +28,7 @@
         <n-checkbox v-model:checked="ifAutoCopy" style="flex-grow: 1"> 自动复制 </n-checkbox>
         <n-checkbox v-model:checked="ifGoToWiki" style="flex-grow: 1"> 跳转百科 </n-checkbox>
       </n-form-item>
-      <n-button @click="getAliItem()" :loading="loading" type="primary" style="width: 100%">
+      <n-button @click="getJDItem()" :loading="loading" type="primary" style="width: 100%">
         获取信息
       </n-button>
     </n-form>
@@ -42,9 +42,10 @@ import type { Ref } from 'vue'
 import { data } from '@/json/index'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import maxurl, { add_http } from '@/utils/maxurl'
+import template from '@/templates/product_page.mustache?raw'
+import mustache from 'mustache'
 
 const dev = import.meta.env.DEV
-let site: 'Taobao' | 'Tmall' = location.hostname.includes('taobao') ? 'Taobao' : 'Tmall'
 let code = ref('')
 let loading = ref(false)
 let productItem: Ref<{
@@ -66,45 +67,34 @@ function getTextFromDom(selector: string): string {
   return document.querySelector(selector)?.textContent || ''
 }
 
-async function getAliItem() {
+async function getJDItem() {
   // pagename
   productItem.value.pagename =
-    productItem.value.pagename ||
-    document.title.replace('-淘宝网', '').replace('-tmall.com天猫', '')
+    productItem.value.pagename || document.title.replace('【图片 价格 品牌 报价】-京东', '')
 
   // price
-  productItem.value.price =
-    productItem.value.price ||
-    Number(getTextFromDom('div[class*="--subPrice--"] span:nth-child(3)'))
+  productItem.value.price = productItem.value.price || Number(getTextFromDom('.p-price .price'))
 
   // link
-  let link =
-    site === 'Taobao'
-      ? new URL('https://item.taobao.com/item.htm')
-      : new URL('https://detail.tmall.com/item.htm')
-  link.searchParams.set('id', new URLSearchParams(location.search).get('id') || '')
-
+  let link = new URL(location.href)
+  link.hash = ''
+  link.search = ''
   // brand
-  let shopName = getTextFromDom("span[class*='--shopName--']")
-  let brand =
-    (site === 'Taobao'
-      ? (data.Taobao2Brand as Record<string, string>)?.[shopName]
-      : (data.Tmall2Brand as Record<string, string>)?.[shopName]) ?? shopName
+  let shopName = getTextFromDom('.top-name')
+  let brand = (data.Jd2Brand as Record<string, string>)?.[shopName] || shopName
 
   // feat
   let series = data['series']
   let defaultFeat = ''
   series.forEach((element) => {
-    if (getTextFromDom("h1[class*='--mainTitle--']").includes(element)) {
+    if (productItem.value.pagename.includes(element)) {
       defaultFeat = element
     }
   })
   productItem.value.feat = productItem.value.feat || defaultFeat
 
-  // imgs
-  let imgElementList = document.querySelectorAll(
-    "img[class*='--thumbnailPic--'], img[class*='--valueItemImg--']"
-  )
+  // main imgs
+  let imgElementList = document.querySelectorAll('#spec-list img, #choose-attrs img')
   let imgsURL: string[] = []
   imgElementList.forEach((ele) => {
     let src = ele.getAttribute('src')
@@ -124,18 +114,23 @@ async function getAliItem() {
   // wikitext for imgs
   let imgNameStr = imgNameList.join('\n')
 
-  // desc
-  let descElementList = document.querySelectorAll('#content img')
+  // desc imgs
+  let descElementList = document.querySelectorAll('.ssd-module')
   let descImgURL: string[] = []
   descElementList.forEach((ele) => {
-    let src = ele.getAttribute('src')
+    let src = window
+      .getComputedStyle(ele)
+      .getPropertyValue('background-image')
+      .replace(/^url\(["']?/, '')
+      .replace(/["']?\)$/, '')
     if (src) descImgURL.push(maxurl(add_http(src)))
   })
   // remove duplicate urls
   descImgURL = Array.from(new Set(descImgURL))
   // remove known non-desc imgs
   let descImgBlackList = [
-    '//img.alicdn.com/imgextra/i3/O1CN01XU1Y2d1Sk7fIMOkeU_!!6000000002284-2-tps-1125-1446.png'
+    'https://img30.360buyimg.com/sku/jfs/t1/281576/6/14880/55331/67efa61eF975f3a83/85612570306a1f9c.jpg.avif',
+    'https://img30.360buyimg.com/sku/jfs/t1/284997/18/14510/30069/67efa61eF9546b437/39ee61abf5636a32.jpg.avif'
   ]
   descImgBlackList.forEach((ele) => {
     descImgURL = descImgURL.filter((url) => url !== maxurl(add_http(ele)))
@@ -145,10 +140,7 @@ async function getAliItem() {
   let descImgNameList: string[] = [] //图片的文件名列表
   descImgURL.forEach((ele, index) => {
     if (ifDownload.value) {
-      GM_download(
-        'https:' + ele,
-        productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)
-      )
+      GM_download(ele, productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4))
     }
     descImgNameList = descImgNameList.concat(
       productItem.value.pagename + ' 描述图' + (index + 1) + ele.slice(-4)
@@ -158,13 +150,19 @@ async function getAliItem() {
   let descImgNameStr = descImgNameList.join('|')
 
   //等待长图加载完毕后输出结果
-  code.value = `{{周边信息\n|版权=\n|尺寸=\n|定价=${
-    productItem.value.price
-  }\n|货号=\n|链接（京东）=\n|链接（乐乎市集）=\n|链接（奇货）=\n|链接（淘宝）=${site === 'Taobao' ? link : ''}\n|链接（天猫）=${site === 'Tmall' ? link : ''}\n|链接（玩具反斗城）=\n|品牌=${brand}\n|日期=${
-    productItem.value.date || ''
-  }\n|适龄=\n|条码=\n|主题=${
-    productItem.value.feat
-  }\n}}\n\n<gallery>\n${imgNameStr}\n</gallery>\n\n{{长图|${descImgNameStr}}}\n`
+  code.value = mustache.render(
+    template,
+    {
+      jdLink: link.toString(),
+      price: productItem.value.price,
+      brand: brand,
+      date: productItem.value.date || '',
+      mainImages: imgNameStr,
+      descImages: descImgNameStr
+    },
+    {},
+    ['<<', '>>']
+  )
 
   // 如果启用了自动复制，就复制结果
   ifAutoCopy.value ? GM_setClipboard(code.value, 'text/plain') : null
