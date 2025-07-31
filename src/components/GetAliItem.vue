@@ -44,7 +44,6 @@ import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import maxurl, { add_http } from '@/utils/maxurl'
 import template from '@/templates/product_page.mustache?raw'
 import mustache from 'mustache'
-import { features } from 'process'
 
 const dev = import.meta.env.DEV
 let site: 'Taobao' | 'Tmall' = location.hostname.includes('taobao') ? 'Taobao' : 'Tmall'
@@ -77,8 +76,7 @@ async function getAliItem() {
 
   // price
   productItem.value.price =
-    productItem.value.price ||
-    Number(getTextFromDom('div[class*="--subPrice--"] span:nth-child(3)'))
+    productItem.value.price || Number(getTextFromDom('div[class*="subPrice--"] span:nth-child(3)'))
 
   // link
   let link =
@@ -88,7 +86,7 @@ async function getAliItem() {
   link.searchParams.set('id', new URLSearchParams(location.search).get('id') || '')
 
   // brand
-  let shopName = getTextFromDom("span[class*='--shopName--']")
+  let shopName = getTextFromDom("span[class*='shopName--']")
   let brand =
     (site === 'Taobao'
       ? (data.Taobao2Brand as Record<string, string>)?.[shopName]
@@ -98,7 +96,7 @@ async function getAliItem() {
   let series = data['series']
   let defaultFeat = ''
   series.forEach((element) => {
-    if (getTextFromDom("h1[class*='--mainTitle--']").includes(element)) {
+    if (productItem.value.pagename.includes(element)) {
       defaultFeat = element
     }
   })
@@ -106,7 +104,7 @@ async function getAliItem() {
 
   // imgs
   let imgElementList = document.querySelectorAll(
-    "img[class*='--thumbnailPic--'], img[class*='--valueItemImg--']"
+    "img[class*='thumbnailPic--'], img[class*='valueItemImg--']"
   )
   let imgsURL: string[] = []
   imgElementList.forEach((ele) => {

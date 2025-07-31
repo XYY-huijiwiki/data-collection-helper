@@ -30,9 +30,9 @@ function getYouTubeList(type: 'link' | 'title' | 'wiki') {
   }
 
   // init the result array
-  let res:{link:string,title:string,wiki:string}[] = []
+  let res: { link: string; title: string; wiki: string }[] = []
 
-  DOMList.forEach(element => {
+  DOMList.forEach((element) => {
     let href = element.getAttribute('href')
     let title = element.getAttribute('title') + ` - YouTube`
     let id = new URLSearchParams(href?.split('?')[1]).get('v')
