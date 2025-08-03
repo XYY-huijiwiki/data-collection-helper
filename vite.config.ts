@@ -38,7 +38,8 @@ export default defineConfig({
           'http*://detail.tmall.com/item.htm*',
           'http*://www.mgtv.com/h/*',
           'http*://product.dangdang.com/*',
-          'http*://item.jd.com/*'
+          'http*://item.jd.com/*',
+          'http*://shop.e.weibo.com/*'
         ]
       },
       build: {

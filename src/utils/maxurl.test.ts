@@ -29,6 +29,11 @@ test.each([
       'https://img14.360buyimg.com/n5/s114x114_jfs/t1/158229/8/39694/166392/6784863cF6a8276c5/09005f48b98e1088.jpg.avif',
     output:
       'https://img14.360buyimg.com/imgzone/jfs/t1/158229/8/39694/166392/6784863cF6a8276c5/09005f48b98e1088.jpg'
+  },
+  {
+    // Weibo's image
+    input: 'https://wx2.sinaimg.cn/large/6544f080ly8i3yrsjl2sfj20u073de81.jpg',
+    output: 'https://wx2.sinaimg.cn/orignal/6544f080ly8i3yrsjl2sfj20u073de81.jpg'
   }
 ])(`Test maxurl() case %#`, ({ input, output }) => {
   expect(maxurl(input)).toBe(output)

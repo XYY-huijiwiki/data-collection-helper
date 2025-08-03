@@ -14,6 +14,7 @@
       <get-ali-item v-if="currentSite === `淘宝` || currentSite === `天猫`" />
       <get-dangdang-item v-if="currentSite === `当当网`" />
       <get-jd-item v-if="currentSite === `京东`" />
+      <get-weibo-item v-if="currentSite === `微博`" />
 
       <template #footer>
         <n-flex>
@@ -56,6 +57,9 @@ if (location.host === 'product.dangdang.com') {
 }
 if (location.href.match(/item.jd.com\/*/)) {
   currentSite = '京东'
+}
+if (location.href.match(/shop.e.weibo.com\/*/)) {
+  currentSite = '微博'
 }
 
 GM_registerMenuCommand('打开羊羊百科小助手', () => {

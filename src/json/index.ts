@@ -13,6 +13,9 @@ export const data = {
   Jd2Brand: {
     旺佰福官方旗舰店: '旺佰福'
   },
+  WB2Brand: {
+    喜羊羊与灰太狼: '原创动力'
+  },
   series: [
     // 电视动画
     // '喜羊羊与灰太狼',

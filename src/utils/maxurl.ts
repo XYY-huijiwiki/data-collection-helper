@@ -1,4 +1,4 @@
-// a small part of `https://github.com/qsniyg/maxurl`
+// this file a small part of `https://github.com/qsniyg/maxurl`
 
 var add_http = function (url: string): string {
   if (/^\/\/[^/]+\.[a-z]+\//.test(url)) return 'http:' + url
@@ -82,9 +82,11 @@ function bigImage(src: string) {
       .replace(/(\.[^/._?#]+)_\.webp(?:[?#].*)?$/, '$1')
       .replace(/\?.*/, '')
   }
-
   if (domain_nosub === '1818lao.com' && domain.match(/^i[0-9]*\./)) {
     return src.replace(/:\/\/[^/]*\/aliexpress[0-9]*(\/kf\/)/, '://ae01.alicdn.com$1')
+  }
+  if (domain_nosub === 'sinaimg.cn' && src.match(/sinaimg\.cn\/large\//)) {
+    return src.replace(/sinaimg\.cn\/large\//, 'sinaimg.cn/orignal/')
   }
 
   return src
