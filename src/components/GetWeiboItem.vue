@@ -30,10 +30,11 @@
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { data } from '@/json/index'
-import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
+import { GM_setClipboard } from 'vite-plugin-monkey/dist/client'
 import maxurl, { add_http } from '@/utils/maxurl'
 import template from '@/templates/product_page.mustache?raw'
 import mustache from 'mustache'
+import { createFileManager } from '@/utils/file-manager'
 import { dl } from '@/utils/dl'
 
 const dev = import.meta.env.DEV
@@ -59,6 +60,9 @@ function getTextFromDom(selector: string): string {
 }
 
 async function getWeiboItem() {
+  const mainImgManager = createFileManager()
+  const descImgManager = createFileManager()
+
   // pagename
   productItem.value.pagename = productItem.value.pagename || getTextFromDom('span[class*=_title_]')
 
@@ -94,8 +98,7 @@ async function getWeiboItem() {
   // main imgs
   let imgElementList = Array.from(
     document.querySelectorAll('div[class*=_swiper_] img[class*=_img_]')
-  )
-  imgElementList = imgElementList.concat(
+  ).concat(
     Array.from(
       document.querySelectorAll('div[class*=_skuCardWrapper_] div[class*=_colorSpec_] img')
     )
@@ -109,16 +112,16 @@ async function getWeiboItem() {
   // remove duplicate urls
   imgsURL = Array.from(new Set(imgsURL))
   dev && console.log('imgs', imgsURL)
-  // order and download imgs
-  let imgNameList: string[] = [] //图片的文件名列表
-  imgsURL.forEach((ele, index) => {
-    if (ifDownload.value) {
-      dl(ele, productItem.value.pagename + ' ' + (index + 1) + ele.slice(-4))
-    }
-    imgNameList = imgNameList.concat(productItem.value.pagename + ' ' + (index + 1) + ele.slice(-4))
-  })
+  // store imgs
+  for (let index = 0; index < imgsURL.length; index++) {
+    const element = imgsURL[index]
+    await mainImgManager.addFileByUrl(element, productItem.value.pagename + ' ' + (index + 1))
+  }
   // wikitext for imgs
-  let imgNameStr = imgNameList.join('\n')
+  let imgNameStr = mainImgManager
+    .listFiles()
+    .map((file) => file.filename)
+    .join('\n')
 
   // desc imgs
   let descElementList = document
@@ -132,18 +135,19 @@ async function getWeiboItem() {
   // remove duplicate urls
   descImgURL = Array.from(new Set(descImgURL))
   dev && console.log('descImg', descImgURL)
-  // order and download desc imgs
-  let descImgNameList: string[] = [] //图片的文件名列表
-  descImgURL.forEach((ele, index) => {
-    if (ifDownload.value) {
-      dl(ele, productItem.value.pagename + ' 描述图 ' + (index + 1) + ele.slice(-4))
-    }
-    descImgNameList = descImgNameList.concat(
-      productItem.value.pagename + ' 描述图 ' + (index + 1) + ele.slice(-4)
+  // store desc imgs
+  for (let index = 0; index < descImgURL.length; index++) {
+    const element = descImgURL[index]
+    await descImgManager.addFileByUrl(
+      element,
+      productItem.value.pagename + ' 描述图 ' + (index + 1)
     )
-  })
+  }
   // wikitext for desc imgs
-  let descImgNameStr = descImgNameList.join('|')
+  let descImgNameStr = descImgManager
+    .listFiles()
+    .map((file) => file.filename)
+    .join('|')
 
   //等待长图加载完毕后输出结果
   code.value = mustache.render(
@@ -160,6 +164,12 @@ async function getWeiboItem() {
     {},
     ['<<', '>>']
   )
+
+  // 如果启用了下载图片，就下载图片
+  if (ifDownload.value) {
+    mainImgManager.asyncForEach(dl)
+    descImgManager.asyncForEach(dl)
+  }
 
   // 如果启用了自动复制，就复制结果
   ifAutoCopy.value ? GM_setClipboard(code.value, 'text/plain') : null

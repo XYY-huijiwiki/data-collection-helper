@@ -1,10 +1,11 @@
-async function dl(url: string, name?: string) {
-  let blob = await (await fetch(url)).blob()
+import type { FileEntry } from '@/utils/file-manager'
+
+async function dl(fileEntry: FileEntry) {
+  let blob = fileEntry.blob
   let objectUrl = URL.createObjectURL(blob)
-  let filename = name || url.split('/').pop() || 'download'
   let a = document.createElement('a')
   a.href = objectUrl
-  a.download = filename
+  a.download = fileEntry.filename
   a.click()
   a.remove()
   URL.revokeObjectURL(objectUrl)
