@@ -46,6 +46,7 @@ import template from '@/templates/product_page.mustache?raw'
 import mustache from 'mustache'
 import { createFileManager } from '@/utils/file-manager'
 import { dl } from '@/utils/dl'
+import JSZip from 'jszip'
 
 const dev = import.meta.env.DEV
 let site: 'Taobao' | 'Tmall' = location.hostname.includes('taobao') ? 'Taobao' : 'Tmall'
@@ -118,10 +119,6 @@ async function getAliItem() {
       if (src) await mainImgManager.addFileByUrl(maxurl(add_http(src)))
     }
     console.log(mainImgManager.listFiles())
-    // download imgs
-    if (ifDownload.value) {
-      await mainImgManager.asyncForEach(dl)
-    }
     // wikitext for imgs
     let imgNameStr = mainImgManager
       .listFiles()
@@ -143,10 +140,6 @@ async function getAliItem() {
       }
     }
     console.log(descImgManager.listFiles())
-    // download desc imgs
-    if (ifDownload.value) {
-      await descImgManager.asyncForEach(dl)
-    }
     // wikitext for desc imgs
     let descImgNameStr = descImgManager
       .listFiles()
@@ -168,6 +161,20 @@ async function getAliItem() {
       {},
       ['<<', '>>']
     )
+
+    // 如果启用了下载图片
+    if (ifDownload.value) {
+      let zip = JSZip()
+      await mainImgManager.asyncForEach(async (file) => {
+        await zip.file(file.filename, file.blob)
+      })
+      await descImgManager.asyncForEach(async (file) => {
+        await zip.file(file.filename, file.blob)
+      })
+      let zipBlob = await zip.generateAsync({ type: 'blob' })
+      let zipName = `${productItem.value.pagename}.zip`
+      dl(zipBlob, zipName)
+    }
 
     // 如果启用了自动复制，就复制结果
     ifAutoCopy.value ? GM_setClipboard(code.value, 'text/plain') : null

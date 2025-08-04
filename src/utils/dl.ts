@@ -1,11 +1,8 @@
-import type { FileEntry } from '@/utils/file-manager'
-
-async function dl(fileEntry: FileEntry) {
-  let blob = fileEntry.blob
+async function dl(blob: Blob, filename?: string): Promise<void> {
   let objectUrl = URL.createObjectURL(blob)
   let a = document.createElement('a')
   a.href = objectUrl
-  a.download = fileEntry.filename
+  a.download = filename || objectUrl.split('/').pop() || 'download'
   a.click()
   a.remove()
   URL.revokeObjectURL(objectUrl)
