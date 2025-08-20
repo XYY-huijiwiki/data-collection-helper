@@ -71,6 +71,12 @@ async function getXhsItem() {
         {}
       )
       .json()
+    const varData = await ky
+      .get<any>(
+        `https://mall.xiaohongshu.com/api/store/jpd/edith/detail/h5/toc/variant?item_id=${itemId}&variant_click_type=1&source=h5&version=0.0.5`,
+        {}
+      )
+      .json()
 
     // pagename
     productItem.value.pagename =
@@ -98,9 +104,17 @@ async function getXhsItem() {
 
     // main imgs
     let mainImgManager = createFileManager({ baseFilename: productItem.value.pagename })
-    let imgElementList = itemData.data.template_data[0].carouselH5.images
+    let imgElementList: string[] = []
+    for (let index = 0; index < itemData.data.template_data[0].carouselH5.images.length; index++) {
+      const element = itemData.data.template_data[0].carouselH5.images[index]
+      imgElementList.push(element.url)
+    }
+    for (let index = 0; index < varData.data.template_data.length; index++) {
+      const element = varData.data.template_data[index]
+      imgElementList.push(element.headerV4.previewImage)
+    }
     for (const ele of imgElementList) {
-      let url = new URL(add_https(ele.url))
+      let url = new URL(add_https(ele))
       // remove all query parameters
       url.search = ''
       console.log(url)
