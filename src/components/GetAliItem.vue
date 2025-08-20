@@ -41,7 +41,7 @@ import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { data } from '@/json/index'
 import { GM_setClipboard } from 'vite-plugin-monkey/dist/client'
-import maxurl, { add_http } from '@/utils/maxurl'
+import maxurl, { add_https } from '@/utils/maxurl'
 import template from '@/templates/product_page.mustache?raw'
 import mustache from 'mustache'
 import { createFileManager } from '@/utils/file-manager'
@@ -116,7 +116,7 @@ async function getAliItem() {
     )
     for (const ele of imgElementList) {
       let src = ele.getAttribute('src')
-      if (src) await mainImgManager.addFileByUrl(maxurl(add_http(src)))
+      if (src) await mainImgManager.addFileByUrl(maxurl(add_https(src)))
     }
     console.log(mainImgManager.listFiles())
     // wikitext for imgs
@@ -129,13 +129,14 @@ async function getAliItem() {
     let descImgManager = createFileManager({ baseFilename: productItem.value.pagename + ' 描述图' })
     let descElementList = Array.from(document.querySelectorAll('#content img'))
     let descImgBlackList = [
-      'http://img.alicdn.com/imgextra/i3/O1CN01XU1Y2d1Sk7fIMOkeU_!!6000000002284-2-tps-1125-1446.png',
-      'http://g.alicdn.com/s.gif'
+      'https://img.alicdn.com/imgextra/i3/O1CN01XU1Y2d1Sk7fIMOkeU_!!6000000002284-2-tps-1125-1446.png',
+      'https://g.alicdn.com/s.gif',
+      'https://img.alicdn.com/imgextra/i4/O1CN01VpyKtE23cvEwRFMnK_!!6000000007277-2-tps-1823-281.png'
     ] // known non-desc imgs
     for (const ele of descElementList) {
       let src = ele.getAttribute('src')
       if (src) {
-        let url = maxurl(add_http(src))
+        let url = maxurl(add_https(src))
         if (!descImgBlackList.includes(url)) await descImgManager.addFileByUrl(url)
       }
     }
@@ -184,8 +185,8 @@ async function getAliItem() {
       ? window.open(`//xyy.huijiwiki.com/wiki/${productItem.value.pagename}?action=edit`)
       : null
   } catch (error) {
-    console.error('获取商品信息失败:', error)
     code.value = '获取商品信息失败，请检查控制台错误信息。'
+    throw error
   } finally {
     loading.value = false
   }

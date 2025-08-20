@@ -27,7 +27,7 @@ export function createFileManager(config?: { baseFilename?: string }) {
       try {
         // Fetch file
         const response = await fetch(url)
-        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+        if (!response.ok) throw new Error(`HTTP ${response.status} (${url})`)
 
         // Get ArrayBuffer
         const arrayBuffer = await response.arrayBuffer()
@@ -91,7 +91,7 @@ export function createFileManager(config?: { baseFilename?: string }) {
         return fileEntry
       } catch (error) {
         console.error(`Failed to add file: ${error}`)
-        return null
+        throw error
       }
     },
 

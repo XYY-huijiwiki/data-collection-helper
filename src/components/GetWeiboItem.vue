@@ -31,7 +31,7 @@ import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { data } from '@/json/index'
 import { GM_setClipboard } from 'vite-plugin-monkey/dist/client'
-import maxurl, { add_http } from '@/utils/maxurl'
+import maxurl, { add_https } from '@/utils/maxurl'
 import template from '@/templates/product_page.mustache?raw'
 import mustache from 'mustache'
 import { createFileManager } from '@/utils/file-manager'
@@ -108,7 +108,7 @@ async function getWeiboItem() {
   let imgsURL: string[] = []
   imgElementList.forEach((ele) => {
     let src = ele.getAttribute('src')
-    if (src) imgsURL.push(maxurl(add_http(src)))
+    if (src) imgsURL.push(maxurl(add_https(src)))
   })
   // remove duplicate urls
   imgsURL = Array.from(new Set(imgsURL))
@@ -131,7 +131,7 @@ async function getWeiboItem() {
   let descImgURL: string[] = []
   descElementList.forEach((ele) => {
     let src = ele.src
-    if (src) descImgURL.push(maxurl(add_http(src)))
+    if (src) descImgURL.push(maxurl(add_https(src)))
   })
   // remove duplicate urls
   descImgURL = Array.from(new Set(descImgURL))

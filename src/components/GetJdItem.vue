@@ -41,7 +41,7 @@ import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { data } from '@/json/index'
 import { GM_download, GM_setClipboard } from 'vite-plugin-monkey/dist/client'
-import maxurl, { add_http } from '@/utils/maxurl'
+import maxurl, { add_https } from '@/utils/maxurl'
 import template from '@/templates/product_page.mustache?raw'
 import mustache from 'mustache'
 
@@ -98,7 +98,7 @@ async function getJDItem() {
   let imgsURL: string[] = []
   imgElementList.forEach((ele) => {
     let src = ele.getAttribute('src')
-    if (src) imgsURL.push(maxurl(add_http(src)))
+    if (src) imgsURL.push(maxurl(add_https(src)))
   })
   // remove duplicate urls
   imgsURL = Array.from(new Set(imgsURL))
@@ -123,7 +123,7 @@ async function getJDItem() {
       .getPropertyValue('background-image')
       .replace(/^url\(["']?/, '')
       .replace(/["']?\)$/, '')
-    if (src) descImgURL.push(maxurl(add_http(src)))
+    if (src) descImgURL.push(maxurl(add_https(src)))
   })
   // remove duplicate urls
   descImgURL = Array.from(new Set(descImgURL))
@@ -133,7 +133,7 @@ async function getJDItem() {
     'https://img30.360buyimg.com/sku/jfs/t1/284997/18/14510/30069/67efa61eF9546b437/39ee61abf5636a32.jpg.avif'
   ]
   descImgBlackList.forEach((ele) => {
-    descImgURL = descImgURL.filter((url) => url !== maxurl(add_http(ele)))
+    descImgURL = descImgURL.filter((url) => url !== maxurl(add_https(ele)))
   })
   dev && console.log('descImg', descImgURL)
   // order and download desc imgs

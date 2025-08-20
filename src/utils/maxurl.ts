@@ -1,8 +1,8 @@
 // this file a small part of `https://github.com/qsniyg/maxurl`
 
-var add_http = function (url: string): string {
-  if (/^\/\/[^/]+\.[a-z]+\//.test(url)) return 'http:' + url
-  if (!url.match(/^[a-z]+:\/\//)) return 'http://' + url
+var add_https = function (url: string): string {
+  if (/^\/\/[^/]+\.[a-z]+\//.test(url)) return 'https:' + url
+  if (!url.match(/^[a-z]+:\/\//)) return 'https://' + url
   return url
 }
 
@@ -72,7 +72,7 @@ function bigImage(src: string) {
 
   if (domain === 'img-tmdetail.alicdn.com') {
     let newsrc = src.replace(/^[a-z]+:\/\/[^/]+\/+bao\/+uploaded\/+([^/]+\.[^/]+\/+)/, '$1')
-    if (newsrc !== src) return add_http(newsrc)
+    if (newsrc !== src) return add_https(newsrc)
   }
 
   if (domain_nosub === 'alicdn.com' || domain_nosub === 'aliexpress-media.com') {
@@ -100,4 +100,4 @@ function maxurl(src: string) {
 }
 
 export default maxurl
-export { add_http }
+export { add_https }
