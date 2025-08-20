@@ -15,6 +15,7 @@
       <get-dangdang-item v-if="currentSite === `当当网`" />
       <get-jd-item v-if="currentSite === `京东`" />
       <get-weibo-item v-if="currentSite === `微博`" />
+      <get-xhs-item v-if="currentSite === `小红书`" />
 
       <template #footer>
         <n-flex>
@@ -60,6 +61,9 @@ if (location.href.match(/item.jd.com\/*/)) {
 }
 if (location.href.match(/shop.e.weibo.com\/*/)) {
   currentSite = '微博'
+}
+if (location.href.match(/www.xiaohongshu.com\/goods-detail\/*/)) {
+  currentSite = '小红书'
 }
 
 GM_registerMenuCommand('打开羊羊百科小助手', () => {

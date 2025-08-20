@@ -18,6 +18,10 @@ export const data = {
   WB2Brand: {
     喜羊羊与灰太狼: '原创动力'
   },
+  Xhs2Brand: {
+    青物CIMON的店: '青物',
+    '喜羊羊与灰太狼POP UP的店': '奥飞娱乐'
+  },
   series: [
     // 电视动画
     // '喜羊羊与灰太狼',

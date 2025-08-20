@@ -39,7 +39,8 @@ export default defineConfig({
           'http*://www.mgtv.com/h/*',
           'http*://product.dangdang.com/*',
           'http*://item.jd.com/*',
-          'http*://shop.e.weibo.com/*'
+          'http*://shop.e.weibo.com/*',
+          'http*://www.xiaohongshu.com/goods-detail/*'
         ]
       },
       build: {
