@@ -41,6 +41,12 @@ export default defineConfig({
           'http*://item.jd.com/*',
           'http*://shop.e.weibo.com/*',
           'http*://www.xiaohongshu.com/goods-detail/*'
+        ],
+        require: [
+          /* this strange code is to resolve a jszip not working in prod mode issue
+             refer to: https://github.com/Tampermonkey/tampermonkey/issues/1600#issuecomment-1263596487
+             it's confirmed as a bug but the fixing is not planned */
+          `data:application/javascript,window.setImmediate%20%3D%20window.setImmediate%20%7C%7C%20((f%2C%20...args)%20%3D%3E%20window.setTimeout(()%20%3D%3E%20f(args)%2C%200))%3B`
         ]
       },
       build: {

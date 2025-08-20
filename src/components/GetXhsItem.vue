@@ -30,12 +30,11 @@
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { data } from '@/json/index'
-import { GM_setClipboard } from 'vite-plugin-monkey/dist/client'
-import maxurl, { add_https } from '@/utils/maxurl'
+import { GM_setClipboard, GM_download } from 'vite-plugin-monkey/dist/client'
+import { add_https } from '@/utils/maxurl'
 import template from '@/templates/product_page.mustache?raw'
 import mustache from 'mustache'
 import { createFileManager } from '@/utils/file-manager'
-import { dl } from '@/utils/dl'
 import JSZip from 'jszip'
 import ky from 'ky'
 
@@ -169,7 +168,7 @@ async function getXhsItem() {
       })
       let zipBlob = await zip.generateAsync({ type: 'blob' })
       let zipName = `${productItem.value.pagename}.zip`
-      dl(zipBlob, zipName)
+      GM_download(URL.createObjectURL(zipBlob), zipName)
     }
 
     // 如果启用了自动复制，就复制结果

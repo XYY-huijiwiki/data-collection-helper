@@ -1,7 +1,7 @@
 {
   "name": "data-collection-helper",
   "description": "A userscript that helps you collect data from web pages for the XYY Huijiwiki.",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "private": false,
   "type": "module",
   "engines": {
@@ -9,11 +9,11 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vitest --run && run-p type-check \"build-only {@}\" -- && cp index.html dist/",
+    "build": "vitest --run && run-p typecheck \"build-only {@}\" -- && cp index.html dist/",
     "preview": "vite preview",
     "test": "vitest",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
   },
