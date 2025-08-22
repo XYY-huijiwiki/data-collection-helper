@@ -1,7 +1,7 @@
 <template>
   <n-flex vertical>
     <n-alert :show-icon="false" title="获取商品数据">
-      使用下列功能时请务必先手动滑动至页面底部，确保描述图完全加载完毕。
+      使用下列功能时请务必先手动展开右侧被折叠的型号/颜色选择列表，确保图片完全加载完毕。
     </n-alert>
     <n-form>
       <n-form-item label="页面名称">
@@ -115,6 +115,7 @@ async function getItem() {
     // main imgs
     let mainImgManager = createFileManager({ baseFilename: productItem.value.pagename })
     let imgElementList = [
+      ...Array.from(document.querySelectorAll('div.image-big>img')),
       ...Array.from(document.querySelectorAll('div.image-small img')),
       ...Array.from(document.querySelectorAll('span.item img'))
     ]
