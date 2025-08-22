@@ -15,7 +15,7 @@
         <n-checkbox v-model:checked="ifAutoCopy" style="flex-grow: 1"> 自动复制 </n-checkbox>
         <n-checkbox v-model:checked="ifGoToWiki" style="flex-grow: 1"> 跳转百科 </n-checkbox>
       </n-form-item>
-      <n-button @click="getAliItem()" :loading="loading" type="primary" style="width: 100%">
+      <n-button @click="getItem()" :loading="loading" type="primary" style="width: 100%">
         获取信息
       </n-button>
     </n-form>
@@ -55,7 +55,7 @@ function getTextFromDom(selector: string): string {
   return document.querySelector(selector)?.textContent || ''
 }
 
-async function getAliItem() {
+async function getItem() {
   try {
     loading.value = true
 
@@ -70,8 +70,9 @@ async function getAliItem() {
       if (!priceLabel) return undefined
       let priceValue = priceLabel.nextElementSibling?.textContent?.replace(/[^\d.]/g, '')
       if (priceValue?.startsWith('￥')) {
-        return priceValue ? Number(priceValue) : undefined
+        priceValue = priceValue.slice(1)
       }
+      return priceValue ? Number(priceValue) : undefined
     })()
 
     // ageGroup
