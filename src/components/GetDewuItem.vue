@@ -113,7 +113,10 @@ async function getAliItem() {
 
     // main imgs
     let mainImgManager = createFileManager({ baseFilename: productItem.value.pagename })
-    let imgElementList = Array.from(document.querySelectorAll("img[class*='_carouselImg_']"))
+    let imgElementList = [
+      ...Array.from(document.querySelectorAll("img[class*='_carouselImg_']")),
+      ...Array.from(document.querySelectorAll("img[class*='_scrollImg_']"))
+    ]
     for (const ele of imgElementList) {
       let src = ele.getAttribute('src')
       if (src) await mainImgManager.addFileByUrl(maxurl(add_https(src)))

@@ -34,6 +34,20 @@ test.each([
     // Weibo's image
     input: 'https://wx2.sinaimg.cn/large/6544f080ly8i3yrsjl2sfj20u073de81.jpg',
     output: 'https://wx2.sinaimg.cn/orignal/6544f080ly8i3yrsjl2sfj20u073de81.jpg'
+  },
+  {
+    // Dewu's main image
+    input:
+      'https://webimg.dewucdn.com/pro-img/cut-img/20250610/670495e901aa4db88ccd6b8a8b611631.jpg?x-oss-process=image/resize,w_144',
+    output:
+      'https://webimg.dewucdn.com/pro-img/cut-img/20250610/670495e901aa4db88ccd6b8a8b611631.jpg'
+  },
+  {
+    // Dewu's long image
+    input:
+      'https://webimg.dewucdn.com/stark/stark-web/2378155452/fdf6a4ece62e6081e71862d9bd8577d4.jpg?x-oss-process=image/crop,y_0,h_1000/resize,w_1005',
+    output:
+      'https://webimg.dewucdn.com/stark/stark-web/2378155452/fdf6a4ece62e6081e71862d9bd8577d4.jpg'
   }
 ])(`Test maxurl() case %#`, ({ input, output }) => {
   expect(maxurl(input)).toBe(output)
