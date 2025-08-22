@@ -1,7 +1,7 @@
 {
   "name": "data-collection-helper",
   "description": "A userscript that helps you collect data from web pages for the XYY Huijiwiki.",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "private": false,
   "type": "module",
   "engines": {
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^13.0.0",
+    "dayjs": "^1.11.13",
     "file-type": "^21.0.0",
     "jszip": "^3.10.1",
     "ky": "^1.8.2",

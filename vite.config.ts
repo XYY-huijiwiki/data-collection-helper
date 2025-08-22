@@ -40,7 +40,8 @@ export default defineConfig({
           'http*://product.dangdang.com/*',
           'http*://item.jd.com/*',
           'http*://shop.e.weibo.com/*',
-          'http*://www.xiaohongshu.com/goods-detail/*'
+          'http*://www.xiaohongshu.com/goods-detail/*',
+          'http*://fast.dewu.com/page/productDetail*'
         ],
         require: [
           /* this strange code is to resolve a jszip not working in prod mode issue
