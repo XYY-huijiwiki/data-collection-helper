@@ -16,7 +16,8 @@
       <get-jd-item v-if="currentSite === `京东`" />
       <get-weibo-item v-if="currentSite === `微博`" />
       <get-xhs-item v-if="currentSite === `小红书`" />
-      <get-dewu-item v-if="currentSite === `得物`" />
+      <get-dewu-mobile-item v-if="currentSite === `得物 mobile`" />
+      <get-dewu-pc-item v-if="currentSite === `得物 PC`" />
 
       <template #footer>
         <n-flex>
@@ -67,7 +68,10 @@ if (location.href.match(/www.xiaohongshu.com\/goods-detail\/*/)) {
   currentSite = '小红书'
 }
 if (location.href.match(/fast.dewu.com\/page\/productDetail*/)) {
-  currentSite = '得物'
+  currentSite = '得物 mobile'
+}
+if (location.href.match(/www.dewu.com\/product-detail.html*/)) {
+  currentSite = '得物 PC'
 }
 
 GM_registerMenuCommand('打开羊羊百科小助手', () => {

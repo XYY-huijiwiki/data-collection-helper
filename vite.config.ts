@@ -41,7 +41,8 @@ export default defineConfig({
           'http*://item.jd.com/*',
           'http*://shop.e.weibo.com/*',
           'http*://www.xiaohongshu.com/goods-detail/*',
-          'http*://fast.dewu.com/page/productDetail*'
+          'http*://fast.dewu.com/page/productDetail*', // Dewu mobile
+          'http*://www.dewu.com/product-detail.html*' // Dewu PC
         ],
         require: [
           /* this strange code is to resolve a jszip not working in prod mode issue

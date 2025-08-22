@@ -164,8 +164,6 @@ async function getAliItem() {
       ['<<', '>>']
     )
 
-    console.log(code.value)
-
     // 如果启用了下载图片
     if (ifDownload.value) {
       let zip = JSZip()
